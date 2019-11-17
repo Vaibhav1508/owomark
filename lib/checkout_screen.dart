@@ -176,7 +176,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 SizedBox(height: 10,),
                 RaisedButton(
                   child: new Text(
-                    'Proceed To Checkout',
+                    'Proceed',
                     style:
                     new TextStyle(color: Colors.white, fontSize: 18),
                   ),

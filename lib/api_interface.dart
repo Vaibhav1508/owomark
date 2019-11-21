@@ -86,6 +86,24 @@ class ApiInterface {
     return response;
   }
 
+  getProfile(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    response = await dio.post(baseUrl + "/getUserProfile",
+        data: data, options: options);
+    return response;
+  }
+
+  getPayment(String userId, String weight, String total) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['weight'] = weight;
+    data['total'] = total;
+    response =
+        await dio.post(baseUrl + "/getPayments", data: data, options: options);
+    return response;
+  }
+
   getAllProjects(String userId) async {
     Map<String, dynamic> data = new Map();
     data['user_id'] = 'id';
@@ -150,21 +168,21 @@ class ApiInterface {
     return response;
   }
 
-  incrementItem(String subId,String item) async {
+  incrementItem(String subId, String item) async {
     Map<String, dynamic> data = new Map();
     data['cart_id'] = subId;
     data['qty'] = item;
-    response =
-    await dio.post(baseUrl + "/incrementItem", data: data, options: options);
+    response = await dio.post(baseUrl + "/incrementItem",
+        data: data, options: options);
     return response;
   }
 
-  decrementItem(String subId,String item) async {
+  decrementItem(String subId, String item) async {
     Map<String, dynamic> data = new Map();
     data['cart_id'] = subId;
     data['qty'] = item;
-    response =
-    await dio.post(baseUrl + "/decrementItem", data: data, options: options);
+    response = await dio.post(baseUrl + "/decrementItem",
+        data: data, options: options);
     return response;
   }
 

@@ -1,76 +1,96 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:owomark/models/users_item.dart';
 import 'package:owomark/payment_method.dart';
 
-class CheckoutScreen extends StatefulWidget {
+import 'api_interface.dart';
 
+class CheckoutScreen extends StatefulWidget {
   final int amount;
   final int method;
+  final int method_charge;
 
-  CheckoutScreen({Key key, this.amount,this.method}) : super(key: key);
+  CheckoutScreen({Key key, this.amount, this.method, this.method_charge})
+      : super(key: key);
 
   @override
   _CheckoutScreenState createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
+  ApiInterface apiInterface = new ApiInterface();
 
-  FormField city;
-  FormField date;
-  FormField name;
-  FormField email;
-  FormField mobile;
-  FormField address;
+  //Event List
+  List<UsersItem> user = new List();
+
+  TextFormField city;
+  TextFormField date;
+  TextFormField name;
+  TextFormField email;
+  TextFormField mobile;
+  TextFormField address;
+
+  int total;
+
+  final _city = TextEditingController();
+  final _name = TextEditingController();
+  final _email = TextEditingController();
+  final _date = TextEditingController();
+  final _mobile = TextEditingController();
+  final _address = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
-
     name = TextFormField(
-        keyboardType: TextInputType
-            .text, // Use email input type for emails.
+        enabled: false,
+        keyboardType: TextInputType.text,
+        controller: _name, // Use email input type for emails.
         decoration: new InputDecoration(
           hintText: 'Full Name',
           labelText: 'Enter Your Name',
           icon: new Icon(Icons.person),
         ));
     city = TextFormField(
-        keyboardType: TextInputType
-            .text, // Use email input type for emails.
+        keyboardType: TextInputType.text,
+        enabled: false,
+        controller: _city, // Use email input type for emails.
         decoration: new InputDecoration(
-          hintText: 'City',
-          labelText: 'Your City',
+          labelText: 'City',
+          hintText: 'Your City',
           icon: new Icon(Icons.pin_drop),
         ));
 
     email = TextFormField(
-        keyboardType: TextInputType
-            .text, // Use email input type for emails.
+        controller: _email,
+        enabled: false,
+        keyboardType: TextInputType.text, // Use email input type for emails.
         decoration: new InputDecoration(
-          hintText: 'Email',
-          labelText: 'Enter Your Email',
+          labelText: 'Email',
+          hintText: 'Enter Your Email',
           icon: new Icon(Icons.email),
         ));
 
     mobile = TextFormField(
-        keyboardType: TextInputType
-            .text, // Use email input type for emails.
+        controller: _mobile,
+        enabled: false,
+        keyboardType: TextInputType.text, // Use email input type for emails.
         decoration: new InputDecoration(
-          hintText: 'Mobile',
-          labelText: 'Enter Your Mobile',
+          labelText: 'Mobile',
+          hintText: 'Enter Your Mobile',
           icon: new Icon(Icons.phone),
         ));
 
     address = TextFormField(
-        keyboardType: TextInputType
-            .text, // Use email input type for emails.
+        controller: _address,
+        maxLines: 2,
+        keyboardType: TextInputType.text, // Use email input type for emails.
         decoration: new InputDecoration(
-          hintText: 'Address',
-          labelText: 'Enter Your Address',
-
+          labelText: 'Address',
+          hintText: 'Enter Your Address',
           icon: new Icon(Icons.home),
         ));
-
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -81,11 +101,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               iconSize: 30.0,
               color: Colors.black,
               onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PaymentMethod(),
-                ),
-              )),
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PaymentMethod(
+                        amount: widget.amount,
+                      ),
+                    ),
+                  )),
           title: Text(
             'Checkout',
             style: TextStyle(color: Colors.black),
@@ -94,103 +116,162 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           elevation: 3.0,
         ),
         body: Container(
-          height: double.infinity,
-          padding: EdgeInsets.all(10),
-          child: Card(
-
-            color: Colors.white,
-
-            child: ListView(
-              padding: EdgeInsets.all(5),
-              children: <Widget>[
-                ListTile(
-                  title: Text('Cost Details',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                  ),),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text('Order Total',style: TextStyle(
-                    fontSize: 18
-                  ),),
-                  trailing: Text(widget.amount.toString()+' Rs',style: TextStyle(
-                    fontSize: 20
-                  ),),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text('Method Charge',style: TextStyle(
-                      fontSize: 18
-                  ),),
-                  trailing:  Text(widget.amount.toString()+' Rs',style: TextStyle(
-                      fontSize: 20
-                  ),),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text('Total Fees',style: TextStyle(
-                      fontSize: 18
-                  ),),
-                  trailing: Text(widget.amount.toString()+' Rs',style: TextStyle(
-                      fontSize: 20,color: Colors.orange
-                  ),),
-                ),
-
-                SizedBox(height: 10,),
-                Divider(),
-                SizedBox(height: 5,),
-
-                ListTile(
-                  title: Column(
-                    children: <Widget>[
-                      CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_outline),
-                      radius: 25,),
-                      SizedBox(height: 20,),
-                      Text('Buyer Profile',style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold
-                      ),)
-                    ],
+            height: double.infinity,
+            padding: EdgeInsets.all(10),
+            child: Card(
+              color: Colors.white,
+              child: ListView(
+                padding: EdgeInsets.all(5),
+                children: <Widget>[
+                  ListTile(
+                    title: Text(
+                      'Cost Details',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                SizedBox(height: 5,),
-                city,
-
-                SizedBox(height: 5,),
-                name,
-
-                SizedBox(height: 5,),
-
-                email,
-
-                SizedBox(height: 5,),
-
-                mobile,
-
-                SizedBox(height: 5,),
-
-                address,
-
-                SizedBox(height: 10,),
-                RaisedButton(
-                  child: new Text(
-                    'Proceed',
-                    style:
-                    new TextStyle(color: Colors.white, fontSize: 18),
+                  Divider(),
+                  ListTile(
+                    title: Text(
+                      'Order Total',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    trailing: Text(
+                      widget.amount.toString() + ' Rs',
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ),
-                  onPressed: () => () {},
-                  color: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0)),
-                ),
+                  Divider(),
+                  ListTile(
+                    title: Text(
+                      'Method Charge',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    trailing: Text(
+                      widget.method_charge.toString() + ' Rs',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text(
+                      'Total Fees',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    trailing: Text(
+                      total.toString() + ' Rs',
+                      style: TextStyle(fontSize: 20, color: Colors.orange),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Divider(),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  ListTile(
+                    title: Column(
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundColor: Colors.blue,
+                          child: Icon(Icons.person_outline),
+                          radius: 25,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Buyer Profile',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  city,
+                  SizedBox(
+                    height: 5,
+                  ),
+                  name,
+                  SizedBox(
+                    height: 5,
+                  ),
+                  email,
+                  SizedBox(
+                    height: 5,
+                  ),
+                  mobile,
+                  SizedBox(
+                    height: 5,
+                  ),
+                  address,
+                  SizedBox(
+                    height: 10,
+                  ),
+                  RaisedButton(
 
+                    child: new Text(
+                      'Proceed To Checkout',
+                      style: new TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    onPressed: () {
+                      Fluttertoast.showToast(
+                          msg: _name.text, toastLength: Toast.LENGTH_SHORT);
+                    },
+                    color: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0)),
+                  ),
+                ],
+              ),
+            )));
+    ;
+  }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getProfille(context);
 
-              ],
-            ),
-          )
-        ));;
+    total = widget.amount + widget.method_charge;
+  }
+
+  getProfille(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getProfile('23');
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            UsersItem notificationItem = UsersItem.fromMap(list[i]);
+            user.add(notificationItem);
+          }
+          setState(() {
+            for (int i = 0; i < user.length; i++) {
+              Fluttertoast.showToast(
+                  msg: user[i].city, toastLength: Toast.LENGTH_SHORT);
+              _city.text = user[i].city;
+              _email.text = user[i].email;
+              _name.text = user[i].fname + " " + user[i].lname;
+              _mobile.text = user[i].mobile;
+            }
+          });
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
   }
 }

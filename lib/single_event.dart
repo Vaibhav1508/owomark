@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'models/event_item.dart';
 
 class SingleEvent extends StatefulWidget {
@@ -17,7 +17,6 @@ class SingleEvent extends StatefulWidget {
 }
 
 class _SingleEventState extends State<SingleEvent> {
-
   GlobalKey<ScaffoldState> key = new GlobalKey();
 
   ProgressDialog pr;
@@ -31,8 +30,8 @@ class _SingleEventState extends State<SingleEvent> {
 
   @override
   Widget build(BuildContext context) {
-
-    pr = new ProgressDialog(context,type: ProgressDialogType.Normal,isDismissible: true,showLogs: true);
+    pr = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: true, showLogs: true);
 
     pr.style(
         message: 'Please Wait...',
@@ -44,18 +43,9 @@ class _SingleEventState extends State<SingleEvent> {
         progress: 0.0,
         maxProgress: 100.0,
         progressTextStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 13.0,
-            fontWeight: FontWeight.w400
-        ),
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
         messageTextStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 19.0,
-            fontWeight: FontWeight.w600
-        )
-    );
-
-   
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -66,17 +56,17 @@ class _SingleEventState extends State<SingleEvent> {
             iconSize: 30.0,
             color: Colors.black,
             onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => DashboardScreen(),
-              ),
-            )),
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DashboardScreen(),
+                  ),
+                )),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add_circle),
             iconSize: 30,
             color: Colors.blue,
-            onPressed: (){
+            onPressed: () {
               pr.show();
             },
           )
@@ -174,23 +164,14 @@ class _SingleEventState extends State<SingleEvent> {
     super.initState();
 
     getEvents(context);
-
   }
 
   getEvents(context) async {
     setState(() {});
 
-    if(pr!=null){
-      pr.show();
-    }
-
     Future<dynamic> response = apiInterface.getSingleEvent(widget.event_id);
 
     response.then((action) async {
-
-      if(pr!=null && pr.isShowing()){
-        pr.hide();
-      }
       print(action.toString());
       if (action != null) {
         Map data = jsonDecode(action.toString());

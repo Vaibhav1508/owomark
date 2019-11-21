@@ -1,20 +1,35 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:owomark/cart_screen.dart';
 import 'package:owomark/checkout_screen.dart';
+import 'package:owomark/models/payment_item.dart';
 
-import 'dashboard_screen.dart';
+import 'api_interface.dart';
 
 class PaymentMethod extends StatefulWidget {
-
   final int amount;
+  final double weight;
 
-  PaymentMethod({Key key, this.amount}) : super(key: key);
+  PaymentMethod({Key key, this.amount, this.weight}) : super(key: key);
 
   @override
   _PaymentMethodState createState() => _PaymentMethodState();
 }
 
 class _PaymentMethodState extends State<PaymentMethod> {
+  int cod;
+  int wallet;
+  int method;
+  int ctotal = 0;
+  int wtotal = 0;
+
+  ApiInterface apiInterface = new ApiInterface();
+
+  //Category List
+  List<PaymentItem> payment = new List();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +43,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
               onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => DashboardScreen(),
+                      builder: (_) => CartScreen(),
                     ),
                   )),
           title: Text(
@@ -47,9 +62,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                   'Cash On Delivery',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
-                onTap: (){
-
-                },
+                onTap: () {},
                 leading: CircleAvatar(
                   backgroundColor: Colors.blue,
                   child: Icon(
@@ -57,19 +70,24 @@ class _PaymentMethodState extends State<PaymentMethod> {
                     color: Colors.white,
                   ),
                   radius: 25,
-
                 ),
                 trailing: RaisedButton(
                   child: new Text(
                     'Checkout',
-                    style:
-                    new TextStyle(color: Colors.white, fontSize: 18),
+                    style: new TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   onPressed: () {
-                    Fluttertoast.showToast(msg: "Cash on Delivery",toastLength: Toast.LENGTH_SHORT);
-                    Navigator.push(context,MaterialPageRoute(
-                        builder: (_)=>CheckoutScreen(amount: widget.amount,method: 0,)
-                    ));
+                    Fluttertoast.showToast(
+                        msg: "Cash on Delivery",
+                        toastLength: Toast.LENGTH_SHORT);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => CheckoutScreen(
+                                  amount: ctotal,
+                                  method: 0,
+                                  method_charge: cod,
+                                )));
                   },
                   color: Colors.orange,
                   shape: RoundedRectangleBorder(
@@ -78,8 +96,12 @@ class _PaymentMethodState extends State<PaymentMethod> {
               ),
               ListTile(
                 title: Text(
-                  'no need of wallet balance',
+                  'you have to pay',
                   style: TextStyle(fontSize: 18),
+                ),
+                trailing: Text(
+                  ctotal.toString() + ' Rs',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
               Divider(),
@@ -88,8 +110,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                   'Pay from wallet',
                   style: TextStyle(fontSize: 20),
                 ),
-                onTap: (){
-                },
+                onTap: () {},
                 leading: CircleAvatar(
                   backgroundColor: Colors.blue,
                   child: Icon(
@@ -101,14 +122,20 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 trailing: RaisedButton(
                   child: new Text(
                     'Checkout',
-                    style:
-                    new TextStyle(color: Colors.white, fontSize: 18),
+                    style: new TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   onPressed: () {
-                    Fluttertoast.showToast(msg: "Pay from wallet",toastLength: Toast.LENGTH_SHORT);
-                    Navigator.push(context,MaterialPageRoute(
-                      builder: (_)=>CheckoutScreen(amount: widget.amount,method:1,)
-                    ));
+                    Fluttertoast.showToast(
+                        msg: "Pay from wallet",
+                        toastLength: Toast.LENGTH_SHORT);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => CheckoutScreen(
+                                  amount: wtotal,
+                                  method: 1,
+                                  method_charge: wallet,
+                                )));
                   },
                   color: Colors.orange,
                   shape: RoundedRectangleBorder(
@@ -117,13 +144,60 @@ class _PaymentMethodState extends State<PaymentMethod> {
               ),
               ListTile(
                 title: Text(
-                  'your wallet balance',
+                  'you have to pay',
                   style: TextStyle(fontSize: 18),
                 ),
+                trailing: Text(
+                  wtotal.toString() + ' Rs',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
-
             ],
           ),
         ));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPayment(context);
+  }
+
+  getPayment(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getPayment(
+        '1', widget.weight.toString(), widget.amount.toString());
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            PaymentItem notificationItem = PaymentItem.fromMap(list[i]);
+            payment.add(notificationItem);
+          }
+          setState(() {
+            for (int i = 0; i < payment.length; i++) {
+              int getcod = int.parse(payment[i].cod);
+              int getwall = int.parse(payment[i].wallet);
+
+              cod = getcod;
+              wallet = getwall;
+
+              ctotal = widget.amount + cod;
+              wtotal = widget.amount + wallet;
+            }
+          });
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
   }
 }

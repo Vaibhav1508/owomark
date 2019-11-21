@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 
-
 class CartItems {
   String id = "";
   String name = "";
@@ -8,6 +7,8 @@ class CartItems {
   String imageUrl = "";
   String qty = "";
   String price = "";
+  String weight = "";
+  String cweight = "";
 
   Map<String, dynamic> toMap() {
     return {
@@ -17,7 +18,8 @@ class CartItems {
       'img': this.imageUrl,
       'qty': this.qty,
       'price': this.price,
-
+      'weight': this.weight,
+      'c_weight': this.cweight,
     };
   }
 
@@ -29,7 +31,8 @@ class CartItems {
       imageUrl: map['img'] as String,
       qty: map['qty'] as String,
       price: map['price'] as String,
-
+      weight: map['weight'] as String,
+      cweight: map['c_weight'] as String,
     );
   }
 
@@ -40,6 +43,7 @@ class CartItems {
     @required this.title,
     @required this.qty,
     @required this.price,
+    @required this.weight,
+    @required this.cweight,
   });
-
 }

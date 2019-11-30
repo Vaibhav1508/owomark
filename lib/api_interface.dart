@@ -54,6 +54,39 @@ class ApiInterface {
     return response;
   }
 
+  getSlider(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = 'id';
+    response =
+        await dio.post(baseUrl + "/getOffers", data: data, options: options);
+    return response;
+  }
+
+  makeOrder(String userId, String total, String type, String email, String name,
+      String address, String phone, String pin, String dcharge) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['total'] = total;
+    data['type'] = type;
+    data['email'] = email;
+    data['name'] = name;
+    data['address'] = address;
+    data['phone'] = phone;
+    data['pin'] = pin;
+    data['dcharge'] = dcharge;
+    response =
+        await dio.post(baseUrl + "/makeOrder", data: data, options: options);
+    return response;
+  }
+
+  getOrder(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    response =
+        await dio.post(baseUrl + "/getOrders", data: data, options: options);
+    return response;
+  }
+
   getSingleEvent(String userId) async {
     Map<String, dynamic> data = new Map();
     data['event_id'] = userId;
@@ -165,6 +198,15 @@ class ApiInterface {
     data['sub_id'] = subId;
     response =
         await dio.post(baseUrl + "/getProducts", data: data, options: options);
+    return response;
+  }
+
+  addToCart(String userId, String productId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['product_id'] = productId;
+    response =
+        await dio.post(baseUrl + "/addToCart", data: data, options: options);
     return response;
   }
 

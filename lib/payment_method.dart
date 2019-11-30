@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/cart_screen.dart';
 import 'package:owomark/checkout_screen.dart';
 import 'package:owomark/models/payment_item.dart';
+import 'package:owomark/wallet_screen.dart';
 
 import 'api_interface.dart';
 
@@ -24,6 +25,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
   int method;
   int ctotal = 0;
   int wtotal = 0;
+  int balance = 0;
 
   ApiInterface apiInterface = new ApiInterface();
 
@@ -119,28 +121,46 @@ class _PaymentMethodState extends State<PaymentMethod> {
                   ),
                   radius: 25,
                 ),
-                trailing: RaisedButton(
-                  child: new Text(
-                    'Checkout',
-                    style: new TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  onPressed: () {
-                    Fluttertoast.showToast(
-                        msg: "Pay from wallet",
-                        toastLength: Toast.LENGTH_SHORT);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => CheckoutScreen(
-                                  amount: wtotal,
-                                  method: 1,
-                                  method_charge: wallet,
-                                )));
-                  },
-                  color: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ),
+                trailing: balance < wtotal
+                    ? RaisedButton(
+                        child: new Text(
+                          'Add Money',
+                          style:
+                              new TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => WalletScreen()));
+                        },
+                        color: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                      )
+                    : RaisedButton(
+                        child: new Text(
+                          'Checkout',
+                          style:
+                              new TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        onPressed: () {
+                          Fluttertoast.showToast(
+                              msg: "Pay from wallet",
+                              toastLength: Toast.LENGTH_SHORT);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => CheckoutScreen(
+                                        amount: wtotal,
+                                        method: 1,
+                                        method_charge: wallet,
+                                      )));
+                        },
+                        color: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                      ),
               ),
               ListTile(
                 title: Text(
@@ -187,6 +207,9 @@ class _PaymentMethodState extends State<PaymentMethod> {
 
               cod = getcod;
               wallet = getwall;
+
+              int wbalance = int.parse(payment[i].balance);
+              balance = wbalance + balance;
 
               ctotal = widget.amount + cod;
               wtotal = widget.amount + wallet;

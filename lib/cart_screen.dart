@@ -285,7 +285,7 @@ class _CartScreenState extends State<CartScreen> {
   getCart(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getCart('168');
+    Future<dynamic> response = apiInterface.getCart('1');
 
     response.then((action) async {
       print(action.toString());

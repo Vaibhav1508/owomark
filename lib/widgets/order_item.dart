@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:owomark/models/message_model.dart';
-import 'package:owomark/models/order_model.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:owomark/models/order_item.dart';
+
+import '../api_interface.dart';
 import '../chat_screen.dart';
 
 class OrderItem extends StatefulWidget {
@@ -10,6 +12,10 @@ class OrderItem extends StatefulWidget {
 }
 
 class _OrderItemState extends State<OrderItem> {
+  List<OrderItems> orders = new List();
+
+  ApiInterface apiInterface = new ApiInterface();
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -28,7 +34,7 @@ class _OrderItemState extends State<OrderItem> {
             child: ListView.builder(
               itemCount: orders.length,
               itemBuilder: (BuildContext context, int index) {
-                final Order chat = orders[index];
+                final item = orders[index];
 
                 return GestureDetector(
                   onTap: () => Navigator.push(
@@ -43,7 +49,7 @@ class _OrderItemState extends State<OrderItem> {
                     padding:
                         EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                     decoration: BoxDecoration(
-                        color: chat.delivered ? Colors.white : Colors.white,
+                        color: Colors.white,
                         border:
                             Border(bottom: BorderSide(color: Colors.black12))),
                     child: Row(
@@ -67,7 +73,7 @@ class _OrderItemState extends State<OrderItem> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  chat.orderid,
+                                  item.name,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 15.0,
@@ -80,7 +86,7 @@ class _OrderItemState extends State<OrderItem> {
                                   width:
                                       MediaQuery.of(context).size.width * 0.50,
                                   child: Text(
-                                    chat.text,
+                                    'Placed On ' + item.time,
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontSize: 15.0,
@@ -95,17 +101,17 @@ class _OrderItemState extends State<OrderItem> {
                         Column(
                           children: <Widget>[
                             Text(
-                              '- ' + chat.price + ' Rs.',
+                              '- ' + item.price + ' Rs.',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
+                                fontSize: 18.0,
                               ),
                             ),
                             SizedBox(
                               height: 5.0,
                             ),
-                            chat.delivered
+                            item.status == "1"
                                 ? Container(
                                     width: 70.0,
                                     height: 30.0,
@@ -148,5 +154,36 @@ class _OrderItemState extends State<OrderItem> {
             ),
           )),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getOrders(context);
+  }
+
+  getOrders(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getOrder('1');
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            OrderItems notificationItem = OrderItems.fromMap(list[i]);
+            orders.add(notificationItem);
+          }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
   }
 }

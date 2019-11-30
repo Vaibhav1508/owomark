@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:owomark/models/book_item.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
 import 'category_screen.dart';
@@ -42,9 +43,12 @@ class _SingleProductState extends State<SingleProduct> {
                   )),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.add_shopping_cart),
+              icon: Icon(Icons.add_circle_outline),
               iconSize: 30,
-              color: Colors.blue,
+              color: Colors.red,
+              onPressed: () {
+                addToCart(context);
+              },
             )
           ],
           title: Text(
@@ -193,6 +197,31 @@ class _SingleProductState extends State<SingleProduct> {
             product.add(notificationItem);
           }
           setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  addToCart(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.addToCart('1', widget.product_id);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          SweetAlert.show(
+            context,
+            title: 'Added !',
+            subtitle: 'Product has been added to your cart',
+            style: SweetAlertStyle.success,
+          );
         } else {
           print('error');
         }

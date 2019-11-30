@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/models/users_item.dart';
 import 'package:owomark/payment_method.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
+import 'orders_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final int amount;
@@ -213,14 +215,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     height: 10,
                   ),
                   RaisedButton(
-
                     child: new Text(
                       'Proceed To Checkout',
                       style: new TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     onPressed: () {
-                      Fluttertoast.showToast(
-                          msg: _name.text, toastLength: Toast.LENGTH_SHORT);
+                      if (_address.text == "") {
+                        SweetAlert.show(
+                          context,
+                          title: 'Oops !',
+                          subtitle: 'Please provide your address',
+                          style: SweetAlertStyle.error,
+                        );
+                      } else {
+                        makeOrder(context);
+                      }
                     },
                     color: Colors.blueAccent,
                     shape: RoundedRectangleBorder(
@@ -244,7 +253,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   getProfille(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getProfile('23');
+    Future<dynamic> response = apiInterface.getProfile('1');
 
     response.then((action) async {
       print(action.toString());
@@ -266,6 +275,64 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               _mobile.text = user[i].mobile;
             }
           });
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  makeOrder(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.makeOrder(
+        '1',
+        total.toString(),
+        widget.method.toString(),
+        _email.text,
+        _name.text,
+        _address.text,
+        _mobile.text,
+        '380021',
+        widget.method_charge.toString());
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          SweetAlert.show(context,
+              title: 'Thank You !',
+              subtitle: 'your order has been placed',
+              style: SweetAlertStyle.success, onPress: (bool isConfirm) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => OrderScreen(),
+                ));
+
+            return false;
+          });
+
+          /* List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            UsersItem notificationItem = UsersItem.fromMap(list[i]);
+            user.add(notificationItem);
+          }
+          setState(() {
+            for (int i = 0; i < user.length; i++) {
+              Fluttertoast.showToast(
+                  msg: user[i].city, toastLength: Toast.LENGTH_SHORT);
+              _city.text = user[i].city;
+              _email.text = user[i].email;
+              _name.text = user[i].fname + " " + user[i].lname;
+              _mobile.text = user[i].mobile;
+            }
+          });
+
+          */
         } else {
           print('error');
         }

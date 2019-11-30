@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:owomark/cart_screen.dart';
 import 'package:owomark/competitions.dart';
 import 'package:owomark/create_profile.dart';
 import 'package:owomark/event_screen.dart';
 import 'package:owomark/home_screen.dart';
 import 'package:owomark/models/category_item.dart';
+import 'package:owomark/models/slider_item.dart';
 import 'package:owomark/news_feed.dart';
 import 'package:owomark/notification_screen.dart';
 import 'package:owomark/owosell_screen.dart';
@@ -20,6 +22,7 @@ import 'package:owomark/single_product.dart';
 import 'package:owomark/single_project.dart';
 import 'package:owomark/wallet_screen.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
 import 'category_screen.dart';
@@ -47,6 +50,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //Book List
   List<BookItem> books = new List();
 
+  //Slider images
+
+  List<SliderItem> images = new List();
+
   //Best deal List
   List<BookItem> deals = new List();
 
@@ -70,7 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String compurl = 'http://owomark.com/owomarkapp/images/competition/';
   String projurl = 'http://owomark.com/owomarkapp/images/projects/';
   String insturl = 'http://owomark.com/owomarkapp/images/classes/';
-
+  String sliderurl = 'http://owomark.com/owomarkapp/images/offer/';
 
   @override
   Widget build(BuildContext context) {
@@ -231,6 +238,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               icon: Icon(Icons.search),
               iconSize: 30.0,
               color: Colors.grey,
+              onPressed: () {
+                SweetAlert.show(context,
+                    title: 'Thank You !',
+                    subtitle: 'your order has been placed',
+                    style: SweetAlertStyle.success, onPress: (bool isConfirm) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => OrderScreen(),
+                      ));
+
+                  return false;
+                });
+              },
             ),
             IconButton(
                 icon: Icon(Icons.shopping_cart),
@@ -248,6 +269,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           padding: EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
+              images.length == 0 ? Text('') : buildSlider(),
               notifications.length == 0
                   ? Center(
                       child: Text(
@@ -609,6 +631,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    getSlider(context);
     getNotifications(context);
     getDashboardBooks(context);
     getDashboardEvents(context);
@@ -659,6 +682,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
           for (int i = 0; i < list.length; i++) {
             BookItem notificationItem = BookItem.fromMap(list[i]);
             deals.add(notificationItem);
+          }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  //BEst Dels Api
+
+  getSlider(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getSlider('1');
+
+    response.then((action) async {
+      // print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            SliderItem notificationItem = SliderItem.fromMap(list[i]);
+            images.add(notificationItem);
           }
           setState(() {});
         } else {
@@ -1010,6 +1060,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
       aspectRatio: 4 / 2,
+    );
+  }
+
+  Widget buildSlider() {
+    return Container(
+      height: 200,
+      child: Swiper(
+        itemCount: images.length,
+        viewportFraction: 0.8,
+        scale: 0.9,
+        pagination: SwiperPagination(),
+        autoplay: true,
+        itemBuilder: (BuildContext context, int index) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(
+              sliderurl + images[index].imageUrl,
+              fit: BoxFit.cover,
+            ),
+          );
+        },
+      ),
     );
   }
 }

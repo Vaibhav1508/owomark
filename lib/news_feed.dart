@@ -1,78 +1,94 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:owomark/dashboard_screen.dart';
+import 'package:owomark/models/news_item.dart';
+import 'package:owomark/upload_news.dart';
 
-import 'category_screen.dart';
+import 'api_interface.dart';
 
 class NewsFeed extends StatefulWidget {
+  final String comp_id;
+
+  NewsFeed({Key key, this.comp_id}) : super(key: key);
+
   @override
   _NewsFeedState createState() => _NewsFeedState();
 }
 
 class _NewsFeedState extends State<NewsFeed> {
+  ApiInterface apiInterface = new ApiInterface();
+
+  //Event List
+  List<NewsItem> news = new List();
+
+  String projecturl = 'http://owomark.com/owomarkapp/images/newsfeed/';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            iconSize: 30.0,
-            color: Colors.black,
-            onPressed: () => Navigator.push(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              iconSize: 30.0,
+              color: Colors.black,
+              onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DashboardScreen(),
+                    ),
+                  )),
+          title: Text(
+            'News Feed',
+            style: TextStyle(color: Colors.black),
+            //textAlign: TextAlign.center,
+          ),
+          elevation: 3.0,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add_a_photo),
+              iconSize: 30.0,
+              color: Colors.grey,
+              onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => DashboardScreen(),
-                  ),
-                )),
-        title: Text(
-          'News Feed',
-          style: TextStyle(color: Colors.black),
-          //textAlign: TextAlign.center,
+                      builder: (_) => UploadNews(
+                            comp_id: widget.comp_id,
+                          ))),
+            )
+          ],
         ),
-        elevation: 3.0,
-      ),
-      backgroundColor: Colors.white,
-      body: Column(
-        children: <Widget>[
-          Expanded(
-              child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Latest Posts",
-                    style: TextStyle(color: Colors.grey[900], fontSize: 18),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  makeFeed(
-                      username: "manish",
-                      feedImage: 'assets/images/clothes.jpg',
+        backgroundColor: Colors.white,
+        body: news.length == 0
+            ? Center(
+                child: Text(
+                  "No Data Found",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                ),
+              )
+            : ListView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: news.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final item = news[index];
+
+                  return makeFeed(
+                      username: item.fname + " " + item.lname,
+                      feedImage: projecturl + item.imageUrl,
                       feedText: "feed text is here",
-                      feedTime: "1 hour ago",
-                      userImage: 'assets/images/glass.jpg'),
-                  makeFeed(
-                      username: "vaibhav",
-                      feedImage: 'assets/images/glass.jpg',
-                      feedText: "feed text is here",
-                      feedTime: "1 hour ago",
-                      userImage: 'assets/images/clothes.jpg'),
-                ],
-              ),
-            ),
-          )),
-        ],
-      ),
-    );
+                      feedTime: item.time,
+                      userImage: 'assets/images/glass.jpg',
+                      status: item.liked == "1" ? true : false,
+                      likes: item.likes,
+                      id: item.id);
+                }));
   }
 
-  Widget makeFeed({username, userImage, feedTime, feedText, feedImage}) {
+  Widget makeFeed(
+      {username, userImage, feedTime, feedText, feedImage, status, likes, id}) {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Column(
@@ -117,35 +133,17 @@ class _NewsFeedState extends State<NewsFeed> {
                   ),
                 ],
               ),
-              IconButton(
-                  icon: Icon(
-                    Icons.more_horiz,
-                    size: 30,
-                    color: Colors.grey[600],
-                  ),
-                  onPressed: () {})
             ],
           ),
           SizedBox(
-            height: 20,
-          ),
-          Text(
-            feedTime,
-            style: TextStyle(
-                fontSize: 15,
-                height: 1.5,
-                color: Colors.grey[800],
-                letterSpacing: 0.7),
-          ),
-          SizedBox(
-            height: 20,
+            height: 10,
           ),
           Container(
             height: 200,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                  image: AssetImage(feedImage),
+                  image: NetworkImage(feedImage),
                   fit: BoxFit.cover,
                 )),
           ),
@@ -162,14 +160,10 @@ class _NewsFeedState extends State<NewsFeed> {
                     width: 5,
                   ),
                   Text(
-                    "2.5K",
+                    likes,
                     style: TextStyle(fontSize: 15, color: Colors.grey[800]),
                   ),
                 ],
-              ),
-              Text(
-                "512 Comments",
-                style: TextStyle(fontSize: 13, color: Colors.grey[800]),
               ),
             ],
           ),
@@ -178,8 +172,7 @@ class _NewsFeedState extends State<NewsFeed> {
           ),
           Row(
             children: <Widget>[
-              makeLikeButton(true),
-              makeCommentButton(),
+              makeLikeButton(status, id),
             ],
           )
         ],
@@ -202,7 +195,7 @@ class _NewsFeedState extends State<NewsFeed> {
     );
   }
 
-  Widget makeLikeButton(isActive) {
+  Widget makeLikeButton(isActive, id) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
@@ -210,6 +203,7 @@ class _NewsFeedState extends State<NewsFeed> {
         borderRadius: BorderRadius.circular(50),
       ),
       child: Center(
+          child: GestureDetector(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -221,40 +215,71 @@ class _NewsFeedState extends State<NewsFeed> {
               width: 5,
             ),
             Text(
-              "Like",
+              isActive ? "Liked" : "Like",
               style: TextStyle(color: isActive ? Colors.blue : Colors.grey),
             ),
           ],
         ),
-      ),
+        onTap: () {
+          if (isActive) {
+          } else {
+            news.clear();
+            likePost(context, id);
+          }
+        },
+      )),
     );
   }
 
-  Widget makeCommentButton() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[200]),
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.chat,
-              color: Colors.grey,
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            Text(
-              "Comment",
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    getNewsFeed(context);
+  }
+
+  getNewsFeed(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getNewsFeed('1', widget.comp_id);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            NewsItem notificationItem = NewsItem.fromMap(list[i]);
+            news.add(notificationItem);
+          }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  likePost(context, String id) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.likePost('1', id);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          getNewsFeed(context);
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
   }
 }

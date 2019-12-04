@@ -1,7 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:owomark/widgets/order_item.dart';
-import 'package:owomark/widgets/transaction.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:owomark/widgets/transaction.dart';
+import 'package:sweetalert/sweetalert.dart';
+
+import 'api_interface.dart';
 import 'dashboard_screen.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -10,10 +14,11 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
+  ApiInterface apiInterface = new ApiInterface();
 
   int _currentTabIndex = 0;
-  var controller6 = TextEditingController();
-
+  var couponcode = TextEditingController();
+  var amount = TextEditingController();
 
   Widget _savebutton() {
     return RaisedButton(
@@ -46,12 +51,20 @@ class _WalletScreenState extends State<WalletScreen> {
           'Recharge',
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
-        onPressed: () {});
+        onPressed: () {
+          if (couponcode.text != "") {
+            couponRecharge(context);
+          } else {
+            Fluttertoast.showToast(
+                msg: "Please enter coupon code",
+                toastLength: Toast.LENGTH_SHORT);
+          }
+        });
   }
 
   Widget _citytextField() {
     return new TextField(
-      controller: this.controller6,
+      controller: this.amount,
       decoration: new InputDecoration(
         hintText: "Amount to be added",
         labelText: "Amount",
@@ -66,7 +79,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
   Widget _coupontextField() {
     return new TextField(
-      controller: this.controller6,
+      controller: this.couponcode,
       decoration: new InputDecoration(
         hintText: "Type coupon code",
         labelText: "Coupon Code",
@@ -81,34 +94,35 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final _kTabPages = <Widget>[
       ListView(
         padding: EdgeInsets.all(20.0),
         children: <Widget>[
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           CircleAvatar(
             radius: 35,
             backgroundColor: Colors.blue,
-            child: Icon(Icons.card_giftcard,
-              color: Colors.white,size: 30,),
+            child: Icon(
+              Icons.card_giftcard,
+              color: Colors.white,
+              size: 30,
+            ),
           ),
           SizedBox(
             height: 20,
           ),
-
-          Text('Recharge your wallet with Coupon ',
+          Text(
+            'Recharge your wallet with Coupon ',
             style: TextStyle(
               fontSize: 16,
               color: Colors.black87,
-                fontFamily: 'maven_black'
-            ),),
-
-
+            ),
+          ),
           SizedBox(
             height: 20,
           ),
-
           _coupontextField(),
           SizedBox(
             height: 20,
@@ -119,37 +133,41 @@ class _WalletScreenState extends State<WalletScreen> {
       ListView(
         padding: EdgeInsets.all(20.0),
         children: <Widget>[
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           CircleAvatar(
             radius: 35,
             backgroundColor: Colors.blue,
-            child: Icon(Icons.account_balance_wallet,
-            color: Colors.white,size: 30,),
+            child: Icon(
+              Icons.account_balance_wallet,
+              color: Colors.white,
+              size: 30,
+            ),
           ),
           SizedBox(
             height: 20,
           ),
-
-          Text('Available Balance ',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
-          ),),
+          Text(
+            'Available Balance ',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+            ),
+          ),
           SizedBox(
             height: 10,
           ),
-          Text('Rs. 200 ',
+          Text(
+            'Rs. 200 ',
             style: TextStyle(
                 fontSize: 18,
-               // color: ,
-                fontWeight: FontWeight.bold
-            ),),
-
-
+                // color: ,
+                fontWeight: FontWeight.bold),
+          ),
           SizedBox(
             height: 20,
           ),
-
           _citytextField(),
           SizedBox(
             height: 20,
@@ -159,14 +177,12 @@ class _WalletScreenState extends State<WalletScreen> {
       ),
       Column(
         children: <Widget>[
-
           Transaction(),
         ],
       )
     ];
 
-    final _kBottomNavBarItems = <BottomNavigationBarItem> [
-
+    final _kBottomNavBarItems = <BottomNavigationBarItem>[
       BottomNavigationBarItem(
         icon: Icon(Icons.card_giftcard),
         title: Text('Recharge Coupon'),
@@ -177,20 +193,24 @@ class _WalletScreenState extends State<WalletScreen> {
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.receipt),
-        title: Text('Transaction',
+        title: Text(
+          'Transaction',
         ),
       )
     ];
 
-    assert (_kTabPages.length == _kBottomNavBarItems.length);
+    assert(_kTabPages.length == _kBottomNavBarItems.length);
 
-    final bottomNavbar = BottomNavigationBar(items: _kBottomNavBarItems,currentIndex: _currentTabIndex,
+    final bottomNavbar = BottomNavigationBar(
+      items: _kBottomNavBarItems,
+      currentIndex: _currentTabIndex,
       type: BottomNavigationBarType.fixed,
-    onTap: (int index){
-      setState(() {
-        _currentTabIndex = index;
-      });
-    },);
+      onTap: (int index) {
+        setState(() {
+          _currentTabIndex = index;
+        });
+      },
+    );
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -201,11 +221,11 @@ class _WalletScreenState extends State<WalletScreen> {
             iconSize: 30.0,
             color: Colors.black,
             onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => DashboardScreen(),
-              ),
-            )),
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DashboardScreen(),
+                  ),
+                )),
         title: Text(
           'Your Wallet',
           style: TextStyle(color: Colors.black),
@@ -216,5 +236,37 @@ class _WalletScreenState extends State<WalletScreen> {
       body: _kTabPages[_currentTabIndex],
       bottomNavigationBar: bottomNavbar,
     );
+  }
+
+  couponRecharge(context) async {
+    setState(() {});
+
+    Future<dynamic> response =
+        apiInterface.couponRecharge('1', couponcode.text);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          SweetAlert.show(
+            context,
+            title: 'Money Added !',
+            subtitle: 'Your recharge has been successfull',
+            style: SweetAlertStyle.success,
+          );
+          couponcode.text = "";
+        } else {
+          SweetAlert.show(
+            context,
+            title: 'Oops !',
+            subtitle: 'Invalid coupon code',
+            style: SweetAlertStyle.error,
+          );
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
   }
 }

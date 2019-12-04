@@ -145,6 +145,36 @@ class ApiInterface {
     return response;
   }
 
+  addNews(String userId, String compId, String image, String url) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['comp_id'] = compId;
+    data['image'] = image;
+    data['imageurl'] = url;
+
+    response =
+        await dio.post(baseUrl + "/addNews", data: data, options: options);
+    return response;
+  }
+
+  getNewsFeed(String userId, String compId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['comp_id'] = compId;
+    response =
+        await dio.post(baseUrl + "/getNewsFeed", data: data, options: options);
+    return response;
+  }
+
+  likePost(String userId, String compId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['post_id'] = compId;
+    response =
+        await dio.post(baseUrl + "/likePost", data: data, options: options);
+    return response;
+  }
+
   getInstituteByUser(String userId) async {
     Map<String, dynamic> data = new Map();
     data['user_id'] = userId;
@@ -157,6 +187,14 @@ class ApiInterface {
     Map<String, dynamic> data = new Map();
     data['p_id'] = userId;
     response = await dio.post(baseUrl + "/getProjectById",
+        data: data, options: options);
+    return response;
+  }
+
+  getSingleBook(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['book_id'] = userId;
+    response = await dio.post(baseUrl + "/getSingleBook",
         data: data, options: options);
     return response;
   }
@@ -185,6 +223,39 @@ class ApiInterface {
     return response;
   }
 
+  getOwoCategory(String panelId) async {
+    Map<String, dynamic> data = new Map();
+    data['panel_id'] = panelId;
+    response = await dio.post(baseUrl + "/getOwoCategory",
+        data: data, options: options);
+    return response;
+  }
+
+  getOwoselleBook(String city, String deptId) async {
+    Map<String, dynamic> data = new Map();
+    data['city'] = city;
+    data['dept_id'] = deptId;
+    response = await dio.post(baseUrl + "/getOwosellBook",
+        data: data, options: options);
+    return response;
+  }
+
+  getMyBook(String user) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = user;
+    response =
+        await dio.post(baseUrl + "/getMyBook", data: data, options: options);
+    return response;
+  }
+
+  removeMyBook(String user) async {
+    Map<String, dynamic> data = new Map();
+    data['book_id'] = user;
+    response =
+        await dio.post(baseUrl + "/removeMyBook", data: data, options: options);
+    return response;
+  }
+
   getSubCategory(String catId) async {
     Map<String, dynamic> data = new Map();
     data['cat_id'] = catId;
@@ -210,6 +281,23 @@ class ApiInterface {
     return response;
   }
 
+  removeCart(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['cart_id'] = userId;
+    response =
+        await dio.post(baseUrl + "/removeCart", data: data, options: options);
+    return response;
+  }
+
+  couponRecharge(String userId, String couponCode) async {
+    Map<String, dynamic> data = new Map();
+    data['u_id'] = userId;
+    data['coupon'] = couponCode;
+    response = await dio.post(baseUrl + "/couponRecharge",
+        data: data, options: options);
+    return response;
+  }
+
   incrementItem(String subId, String item) async {
     Map<String, dynamic> data = new Map();
     data['cart_id'] = subId;
@@ -225,6 +313,39 @@ class ApiInterface {
     data['qty'] = item;
     response = await dio.post(baseUrl + "/decrementItem",
         data: data, options: options);
+    return response;
+  }
+
+  addSellBook(
+      String title,
+      String publication,
+      String author,
+      String mrp,
+      String discount,
+      String buy_price,
+      String pickup,
+      String info,
+      String imageurl,
+      String image,
+      String uId,
+      String city,
+      String deptId) async {
+    Map<String, dynamic> data = new Map();
+    data['title'] = title;
+    data['publication'] = publication;
+    data['author'] = author;
+    data['discount'] = discount;
+    data['mrp'] = mrp;
+    data['buy_price'] = buy_price;
+    data['pickup'] = pickup;
+    data['info'] = info;
+    data['image'] = image;
+    data['imageurl'] = imageurl;
+    data['u_id'] = uId;
+    data['city'] = city;
+    data['dept_id'] = deptId;
+    response =
+        await dio.post(baseUrl + "/addSellBook", data: data, options: options);
     return response;
   }
 

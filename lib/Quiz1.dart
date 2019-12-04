@@ -2,7 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AnimalQuiz {
-  var question = ["question1", "question2", "question3", "question4"];
+  var question = [
+    "who is prime minister of india ?",
+    "question2",
+    "question3",
+    "question4"
+  ];
   var choices = [
     ["a here", "b here", "c here", "d here"],
     ["a here", "b here", "c here", "d here"],
@@ -41,10 +46,6 @@ class _Quiz1State extends State<Quiz1> {
                   children: <Widget>[
                     new Text(
                       "question ${questionNumber + 1} of ${quiz.question.length}",
-                      style: new TextStyle(fontSize: 22.0),
-                    ),
-                    new Text(
-                      "Score ${finalScore}",
                       style: new TextStyle(fontSize: 22.0),
                     ),
                   ],
@@ -206,13 +207,12 @@ class Summary extends StatelessWidget {
           children: <Widget>[
             new Text(
               "Final Score: $score",
-              style: new TextStyle(
-                fontSize: 25.0,
-              ),
+              style: new TextStyle(fontSize: 25.0, color: Colors.black),
             ),
             new Padding(padding: EdgeInsets.all(10.0)),
             new MaterialButton(
               color: Colors.redAccent,
+              textColor: Colors.white,
               onPressed: () {
                 questionNumber = 0;
                 finalScore = 0;

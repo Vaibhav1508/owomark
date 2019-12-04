@@ -147,13 +147,22 @@ class _CartScreenState extends State<CartScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: <Widget>[
-                                                  Text(
-                                                    item.name,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 15.0,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.50,
+                                                    child: Text(
+                                                      item.name,
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 15.0,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
                                                   ),
                                                   SizedBox(
                                                     height: 15.0,
@@ -190,6 +199,13 @@ class _CartScreenState extends State<CartScreen> {
                                                   Icons.restore_from_trash,
                                                   color: Colors.red,
                                                 ),
+                                                onPressed: () {
+                                                  cartitem.clear();
+                                                  total = 0;
+                                                  weight = 0;
+                                                  cweight = 0;
+                                                  removeCart(context, item.id);
+                                                },
                                               ),
                                               IconButton(
                                                 icon: Icon(
@@ -372,6 +388,30 @@ class _CartScreenState extends State<CartScreen> {
         if (data["status"] == "200") {
           Fluttertoast.showToast(
               msg: "Item Reduced Succeccfully...",
+              toastLength: Toast.LENGTH_SHORT,
+              fontSize: 16);
+          getCart(context);
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  removeCart(context, String id) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.removeCart(id);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          Fluttertoast.showToast(
+              msg: "Item Removed Succeccfully...",
               toastLength: Toast.LENGTH_SHORT,
               fontSize: 16);
           getCart(context);

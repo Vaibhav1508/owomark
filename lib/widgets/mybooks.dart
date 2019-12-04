@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:owomark/models/mybook_model.dart';
+import 'package:owomark/models/book_item.dart';
+import 'package:sweetalert/sweetalert.dart';
+
+import '../api_interface.dart';
 
 class MyBooks extends StatefulWidget {
   @override
@@ -7,6 +12,11 @@ class MyBooks extends StatefulWidget {
 }
 
 class _MyBooksState extends State<MyBooks> {
+  ApiInterface apiInterface = new ApiInterface();
+  String producturl = 'http://owomark.com/owomarkapp/images/book/';
+
+  //Category List
+  List<BookItem> books = new List();
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -23,34 +33,29 @@ class _MyBooksState extends State<MyBooks> {
                 topLeft: Radius.circular(30.0),
                 topRight: Radius.circular(30.0)),
             child: ListView.builder(
-              itemCount: mybooks.length,
+              itemCount: books.length,
               itemBuilder: (BuildContext context, int index) {
-                final Mybook transaction = mybooks[index];
+                final item = books[index];
 
                 return GestureDetector(
-
                   child: Container(
                     // width: 300,
                     margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
                     padding:
-                    EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                     decoration: BoxDecoration(
                         color: Colors.white,
                         border:
-                        Border(bottom: BorderSide(color: Colors.black12))),
+                            Border(bottom: BorderSide(color: Colors.black12))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            CircleAvatar(
-                              radius: 20.0,
-                              backgroundColor: Colors.blue,
-                              child: Icon(
-                                Icons.book,
-                                color: Colors.white,
-                                size: 25,
-                              ),
+                            Image.network(
+                              producturl + item.imageUrl,
+                              height: 50,
+                              width: 50,
                             ),
                             SizedBox(
                               width: 10.0,
@@ -59,10 +64,10 @@ class _MyBooksState extends State<MyBooks> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  transaction.title,
+                                  item.title,
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 15.0,
+                                      fontSize: 17.0,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
@@ -70,12 +75,12 @@ class _MyBooksState extends State<MyBooks> {
                                 ),
                                 Container(
                                   width:
-                                  MediaQuery.of(context).size.width * 0.50,
+                                      MediaQuery.of(context).size.width * 0.50,
                                   child: Text(
-                                    transaction.text,
+                                    'Price : ' + item.buy_price,
                                     style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15.0,
+                                      color: Colors.black,
+                                      fontSize: 18.0,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -87,10 +92,28 @@ class _MyBooksState extends State<MyBooks> {
                         Row(
                           children: <Widget>[
                             IconButton(
-                              icon: Icon(Icons.restore_from_trash,
-                                color: Colors.red,),
+                              icon: Icon(
+                                Icons.restore_from_trash,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                SweetAlert.show(context,
+                                    title: "Are you sure ?",
+                                    subtitle: "Your book will be deleted",
+                                    style: SweetAlertStyle.confirm,
+                                    showCancelButton: true,
+                                    onPress: (bool isConfirm) {
+                                  if (isConfirm) {
+                                    books.clear();
+                                    removeBooks(context, item.id);
+                                    SweetAlert.show(context,
+                                        style: SweetAlertStyle.success,
+                                        title: "Deleted");
+                                    return false;
+                                  }
+                                });
+                              },
                             ),
-
                           ],
                         )
                       ],
@@ -101,5 +124,59 @@ class _MyBooksState extends State<MyBooks> {
             ),
           )),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getBooks(context);
+  }
+
+  getBooks(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getMyBook('1');
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            BookItem notificationItem = BookItem.fromMap(list[i]);
+            books.add(notificationItem);
+          }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  //remove book
+
+  removeBooks(context, String id) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.removeMyBook(id);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          getBooks(context);
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
   }
 }

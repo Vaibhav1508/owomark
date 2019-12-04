@@ -7,6 +7,7 @@ class UsersItem {
   String email = "";
   String mobile = "";
   String city = "";
+  String pincode = "";
 
   Map<String, dynamic> toMap() {
     return {
@@ -16,6 +17,7 @@ class UsersItem {
       'email': this.email,
       'mobile': this.mobile,
       'city': this.city,
+      'pincode': this.pincode,
     };
   }
 
@@ -27,6 +29,7 @@ class UsersItem {
       mobile: map['mobile'] as String,
       email: map['email'] as String,
       city: map['city'] as String,
+      pincode: map['pincode'] as String,
     );
   }
 
@@ -37,5 +40,6 @@ class UsersItem {
     @required this.email,
     @required this.city,
     @required this.mobile,
+    @required this.pincode,
   });
 }

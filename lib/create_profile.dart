@@ -1,6 +1,11 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'api_interface.dart';
 import 'dashboard_screen.dart';
+import 'models/users_item.dart';
 
 class CreateProfile extends StatefulWidget {
   @override
@@ -8,17 +13,22 @@ class CreateProfile extends StatefulWidget {
 }
 
 class _CreateProfileState extends State<CreateProfile> {
-  var controller1 = TextEditingController();
-  var controller4 = TextEditingController();
-  var controller5 = TextEditingController();
-  var controller6 = TextEditingController();
+  ApiInterface apiInterface = new ApiInterface();
 
-  var controller2 = TextEditingController();
-  var controller3 = TextEditingController();
+  //Event List
+  List<UsersItem> user = new List();
+
+  var fname = TextEditingController();
+  var mobile = TextEditingController();
+  var pincode = TextEditingController();
+  var city = TextEditingController();
+
+  var lname = TextEditingController();
+  var email = TextEditingController();
 
   Widget _firstnametextField() {
     return new TextField(
-      controller: this.controller1,
+      controller: this.fname,
       decoration: new InputDecoration(
         hintText: "Enter Value",
         labelText: "First Name",
@@ -33,7 +43,7 @@ class _CreateProfileState extends State<CreateProfile> {
 
   Widget _lastnametextField() {
     return new TextField(
-      controller: this.controller2,
+      controller: this.lname,
       decoration: new InputDecoration(
         hintText: "Enter Value",
         labelText: "Last Name",
@@ -48,7 +58,8 @@ class _CreateProfileState extends State<CreateProfile> {
 
   Widget _emailtextField() {
     return new TextField(
-      controller: this.controller3,
+      controller: this.email,
+      enabled: false,
       decoration: new InputDecoration(
         hintText: "Enter E-Mail",
         labelText: "Email",
@@ -63,7 +74,8 @@ class _CreateProfileState extends State<CreateProfile> {
 
   Widget _mobiletextField() {
     return new TextField(
-      controller: this.controller4,
+      controller: this.mobile,
+      enabled: false,
       decoration: new InputDecoration(
         hintText: "Enter Value",
         labelText: "Mobile Number",
@@ -78,7 +90,7 @@ class _CreateProfileState extends State<CreateProfile> {
 
   Widget _pincodetextField() {
     return new TextField(
-      controller: this.controller5,
+      controller: this.pincode,
       decoration: new InputDecoration(
         hintText: "Enter Value",
         labelText: "Pin Code",
@@ -110,7 +122,7 @@ class _CreateProfileState extends State<CreateProfile> {
 
   Widget _citytextField() {
     return new TextField(
-      controller: this.controller6,
+      controller: this.city,
       decoration: new InputDecoration(
         hintText: "Enter Value",
         labelText: "City",
@@ -188,5 +200,47 @@ class _CreateProfileState extends State<CreateProfile> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getProfille(context);
+  }
+
+  getProfille(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getProfile('1');
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            UsersItem notificationItem = UsersItem.fromMap(list[i]);
+            user.add(notificationItem);
+          }
+          setState(() {
+            for (int i = 0; i < user.length; i++) {
+              Fluttertoast.showToast(
+                  msg: user[i].city, toastLength: Toast.LENGTH_SHORT);
+              city.text = user[i].city;
+              email.text = user[i].email;
+              fname.text = user[i].fname;
+              lname.text = user[i].lname;
+              mobile.text = user[i].mobile;
+              pincode.text = user[i].pincode;
+            }
+          });
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
   }
 }

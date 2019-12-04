@@ -12,7 +12,6 @@ import 'package:owomark/models/category_item.dart';
 import 'package:owomark/models/slider_item.dart';
 import 'package:owomark/news_feed.dart';
 import 'package:owomark/notification_screen.dart';
-import 'package:owomark/owosell_screen.dart';
 import 'package:owomark/products_screen.dart';
 import 'package:owomark/projects.dart';
 import 'package:owomark/quiz.dart';
@@ -33,6 +32,7 @@ import 'models/event_item.dart';
 import 'models/institute_item.dart';
 import 'models/project_item.dart';
 import 'orders_screen.dart';
+import 'owo_category.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -150,8 +150,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   style: TextStyle(fontSize: 16),
                 ),
                 trailing: Icon(Icons.compare_arrows),
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => OwosellScreen())),
+                onTap: () => Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => OwoCategory())),
               ),
               ListTile(
                 title: Text(
@@ -555,21 +555,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     )
                   : Container(
                       height: 130,
-                      child: GestureDetector(
-                        child: ListView.builder(
-                          itemCount: competitions.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (BuildContext context, int index) {
-                            final item = competitions[index];
+                      child: ListView.builder(
+                        itemCount: competitions.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = competitions[index];
 
-                            return makepg(
-                                image: compurl + item.imageUrl,
-                                title: item.name);
-                          },
-                        ),
-                        onTap: () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => NewsFeed())),
-                      )),
+                          return GestureDetector(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => NewsFeed(
+                                            comp_id: item.id,
+                                          ))),
+                              child: makepg(
+                                  image: compurl + item.imageUrl,
+                                  title: item.name));
+                        },
+                      ),
+                    ),
               SizedBox(
                 height: 40,
               ),

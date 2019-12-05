@@ -25,7 +25,7 @@ import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
 import 'category_screen.dart';
-import 'institute.dart';
+import 'inst_category.dart';
 import 'models/book_item.dart';
 import 'models/competition_item.drt.dart';
 import 'models/event_item.dart';
@@ -123,7 +123,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 trailing: Icon(Icons.collections_bookmark),
                 onTap: () => Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => Category())),
+                    context, MaterialPageRoute(builder: (_) => InstCategory())),
               ),
               ListTile(
                 title: Text(
@@ -433,11 +433,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
-                  GestureDetector(
-                    child: Text("All"),
-                    onTap: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => Institute())),
-                  )
                 ],
               ),
               SizedBox(
@@ -453,23 +448,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     )
                   : Container(
                       height: 130,
-                      child: GestureDetector(
-                        child: ListView.builder(
-                          itemCount: institutes.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (BuildContext context, int index) {
-                            final item = institutes[index];
+                      child: ListView.builder(
+                        itemCount: institutes.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = institutes[index];
 
-                            return makeInstitute(
+                          return GestureDetector(
+                            child: makeInstitute(
                                 image: insturl + item.imageUrl,
-                                title: item.name);
-                          },
-                        ),
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => SingleInstitute())),
-                      )),
+                                title: item.name),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => SingleInstitute(
+                                          project_id: item.id,
+                                        ))),
+                          );
+                        },
+                      ),
+                    ),
               SizedBox(
                 height: 40,
               ),

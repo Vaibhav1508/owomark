@@ -74,44 +74,52 @@ class _MyInstituteState extends State<MyInstitute> {
                                 SizedBox(
                                   width: 10.0,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      item.name,
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: 15.0,
-                                    ),
-                                    Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
+                                Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.40,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          item.name,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(
+                                          height: 15.0,
+                                        ),
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 0.30,
-                                        child: Column(
-                                          children: <Widget>[
-                                            Text(
-                                              item.location,
-                                              style: TextStyle(
-                                                fontSize: 18.0,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Text(
-                                              "Active",
-                                              style: TextStyle(
-                                                color: Colors.green,
-                                                fontSize: 18.0,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        )),
-                                  ],
-                                )
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  item.location,
+                                                  style: TextStyle(
+                                                    fontSize: 18.0,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                Text(
+                                                  "Active",
+                                                  style: TextStyle(
+                                                    color: Colors.green,
+                                                    fontSize: 18.0,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            )),
+                                      ],
+                                    ))
                               ],
                             ),
                             Row(
@@ -150,7 +158,7 @@ class _MyInstituteState extends State<MyInstitute> {
   getInstitutes(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getInstituteByUser('17');
+    Future<dynamic> response = apiInterface.getInstituteByUser('1');
 
     response.then((action) async {
       print(action.toString());

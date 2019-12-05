@@ -62,6 +62,23 @@ class ApiInterface {
     return response;
   }
 
+  getRecentChats(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    response = await dio.post(baseUrl + "/getRecentChats",
+        data: data, options: options);
+    return response;
+  }
+
+  getMessages(String userId, String sender) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['sender'] = sender;
+    response =
+        await dio.post(baseUrl + "/getMessages", data: data, options: options);
+    return response;
+  }
+
   makeOrder(String userId, String total, String type, String email, String name,
       String address, String phone, String pin, String dcharge) async {
     Map<String, dynamic> data = new Map();
@@ -199,6 +216,22 @@ class ApiInterface {
     return response;
   }
 
+  getInstByCategory(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['cat_id'] = userId;
+    response = await dio.post(baseUrl + "/getInstituteByCategory",
+        data: data, options: options);
+    return response;
+  }
+
+  getInstituteById(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['institute_id'] = userId;
+    response = await dio.post(baseUrl + "/getSingleInstitute",
+        data: data, options: options);
+    return response;
+  }
+
   getInstitutes(String userId) async {
     Map<String, dynamic> data = new Map();
     data['user_id'] = userId;
@@ -220,6 +253,14 @@ class ApiInterface {
     data['panel_id'] = panelId;
     response =
         await dio.post(baseUrl + "/getCategory", data: data, options: options);
+    return response;
+  }
+
+  getInstCategory(String panelId) async {
+    Map<String, dynamic> data = new Map();
+    data['cat_id'] = panelId;
+    response = await dio.post(baseUrl + "/getInstituteCategory",
+        data: data, options: options);
     return response;
   }
 
@@ -313,6 +354,50 @@ class ApiInterface {
     data['qty'] = item;
     response = await dio.post(baseUrl + "/decrementItem",
         data: data, options: options);
+    return response;
+  }
+
+  addInstitute(
+      String name,
+      String location,
+      String contact,
+      String email,
+      String address,
+      String title,
+      String exp,
+      String education,
+      String image,
+      String imageurl,
+      String city,
+      String userId,
+      String catId) async {
+    Map<String, dynamic> data = new Map();
+    data['name'] = title;
+    data['location'] = location;
+    ;
+    data['contact'] = contact;
+    ;
+    data['email'] = email;
+    ;
+    data['address'] = address;
+    ;
+    data['tutor'] = name;
+    ;
+    data['t_exp'] = exp;
+    ;
+    data['t_edu'] = education;
+    ;
+    data['image'] = image;
+    ;
+    data['imageurl'] = imageurl;
+    ;
+    data['city'] = city;
+    ;
+    data['cat_id'] = catId;
+    ;
+    data['u_id'] = userId;
+    response =
+        await dio.post(baseUrl + "/addInstitute", data: data, options: options);
     return response;
   }
 

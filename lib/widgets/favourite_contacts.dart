@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:owomark/models/message_model.dart';
 import 'package:flutter/rendering.dart';
-
-import '../chat_screen.dart';
+import 'package:owomark/models/message_model.dart';
 
 class FavouriteContacts extends StatelessWidget {
   @override
@@ -41,12 +39,6 @@ class FavouriteContacts extends StatelessWidget {
               padding: EdgeInsets.only(left: 10.0),
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChatScreen(user: favourite[index]),
-                    ),
-                  ),
                   child: Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Column(

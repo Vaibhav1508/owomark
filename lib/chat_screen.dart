@@ -1,12 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:owomark/home_screen.dart';
 
-import 'models/message_model.dart';
-import 'models/user_model.dart';
+import 'api_interface.dart';
+import 'models/message_item.dart';
 
 class ChatScreen extends StatefulWidget {
-  final User user;
+  final String user;
 
   ChatScreen({this.user});
 
@@ -15,7 +18,11 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  _buildMessage(Message message, bool isMe) {
+  ApiInterface apiInterface = new ApiInterface();
+
+  List<MessageItem> chat = new List();
+
+  _buildMessage(String message, bool isMe) {
     final Container msg = Container(
       margin: isMe
           ? EdgeInsets.only(top: 8.0, bottom: 8.0, left: 80.0)
@@ -26,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
       width: MediaQuery.of(context).size.width * 0.75,
       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
       decoration: BoxDecoration(
-          color: isMe ? Colors.lightBlueAccent : Colors.lightBlueAccent,
+          color: isMe ? Colors.blue : Colors.lightBlueAccent,
           borderRadius: isMe
               ? BorderRadius.only(
                   topLeft: Radius.circular(15.0),
@@ -47,7 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
             height: 8.0,
           ),
           Text(
-            message.text,
+            message,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.0,
@@ -74,18 +81,12 @@ class _ChatScreenState extends State<ChatScreen> {
       color: Colors.white,
       child: Row(
         children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.photo),
-            iconSize: 25.0,
-            color: Colors.black,
-            onPressed: () {},
-          ),
           Expanded(
             child: TextField(
               textCapitalization: TextCapitalization.sentences,
               onChanged: (value) {},
               decoration: InputDecoration.collapsed(
-                hintText: 'Send a messge...',
+                hintText: 'Type Message Here...',
               ),
             ),
           ),
@@ -107,53 +108,97 @@ class _ChatScreenState extends State<ChatScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: Text(
-            widget.user.name,
+            'Customer ' + widget.user,
             style: TextStyle(
               fontSize: 22.0,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              iconSize: 30.0,
+              color: Colors.black,
+              onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => HomeScreen(),
+                    ),
+                  )),
           elevation: 3.0,
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.more_horiz),
-                iconSize: 30.0,
-                color: Colors.grey,
-                onPressed: () {}),
-          ],
         ),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Column(
             children: <Widget>[
               Expanded(
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(30.0),
-                          topLeft: Radius.circular(30.0),
+                child: chat.length == 0
+                    ? Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only()),
+                        child: Center(
+                          child: Text(
+                            "Start Conversation...",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w400),
+                          ),
+                        ))
+                    : Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only()),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(30.0),
+                            topLeft: Radius.circular(30.0),
+                          ),
+                          child: ListView.builder(
+                            itemCount: chat.length,
+                            reverse: true,
+                            padding: EdgeInsets.only(top: 15.0),
+                            itemBuilder: (BuildContext context, int index) {
+                              final item = chat[index];
+                              final bool isMe = item.sender == '1';
+                              return _buildMessage(item.msg, isMe);
+                            },
+                          ),
                         )),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(30.0),
-                        topLeft: Radius.circular(30.0),
-                      ),
-                      child: ListView.builder(
-                        itemCount: messages.length,
-                        reverse: true,
-                        padding: EdgeInsets.only(top: 15.0),
-                        itemBuilder: (BuildContext context, int index) {
-                          final Message message = messages[index];
-                          final bool isMe = message.sender.id == currentUser.id;
-                          return _buildMessage(message, isMe);
-                        },
-                      ),
-                    )),
               ),
               _buildMessageComposer()
             ],
           ),
         ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getEvents(context);
+  }
+
+  getEvents(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getMessages('1', widget.user);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            MessageItem notificationItem = MessageItem.fromMap(list[i]);
+            chat.add(notificationItem);
+          }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
   }
 }

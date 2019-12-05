@@ -29,8 +29,8 @@ class RecentChats extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => ChatScreen(
-                        user: chat.sender,
-                      ),
+                          //user: chat.sender,
+                          ),
                     ),
                   ),
                   child: Container(

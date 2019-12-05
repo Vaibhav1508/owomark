@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'api_interface.dart';
+import 'chat_screen.dart';
 import 'dashboard_screen.dart';
 import 'models/book_item.dart';
 
@@ -156,7 +157,13 @@ class _SingleBookState extends State<SingleBook> {
                     ),
                     Divider(),
                     ListTile(
-                      title: Text(item.fname + " " + item.lname),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => ChatScreen(
+                                    user: item.usrname,
+                                  ))),
+                      title: Text('Customer ' + item.usrname),
                       trailing: Container(
                         child: Icon(Icons.email),
                       ),

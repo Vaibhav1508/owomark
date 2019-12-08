@@ -139,7 +139,7 @@ class _InstCategoryState extends State<InstCategory> {
   getCategory(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getInstCategory('1');
+    Future<dynamic> response = apiInterface.getInstCategory(widget.panel_id);
 
     response.then((action) async {
       //print(action.toString());

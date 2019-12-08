@@ -20,11 +20,13 @@ class BookItem {
   String lname = "";
   String auth = "";
   String usrname = "";
+  String returnamount = "";
 
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
       'user': this.usrname,
+      'returnAmount': this.returnamount,
       'location': this.location,
       'title': this.name,
       'img': this.imageUrl,
@@ -49,6 +51,7 @@ class BookItem {
     return new BookItem(
       id: map['id'] as String,
       usrname: map['user'] as String,
+      returnamount: map['returnAmount'] as String,
       pub: map['publication'] as String,
       name: map['title'] as String,
       imageUrl: map['img'] as String,
@@ -87,6 +90,7 @@ class BookItem {
     @required this.mrp,
     @required this.pickup,
     @required this.fname,
+    @required this.returnamount,
     @required this.lname,
     @required this.usrname,
   });

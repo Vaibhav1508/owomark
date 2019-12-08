@@ -259,26 +259,28 @@ class _CartScreenState extends State<CartScreen> {
                             color: Colors.black87,
                             fontWeight: FontWeight.bold)),
                   ),
-                  RaisedButton(
-                      color: Colors.blue,
-                      padding: EdgeInsets.all(
-                        10.0,
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5.0),
-                          side: BorderSide(color: Colors.blue)),
-                      highlightColor: Colors.black,
-                      child: new Text(
-                        'Checkout',
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => PaymentMethod(
-                                    amount: total,
-                                    weight: final_weight,
-                                  )))),
+                  cartitem.length == 0
+                      ? Text('')
+                      : RaisedButton(
+                          color: Colors.blue,
+                          padding: EdgeInsets.all(
+                            10.0,
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(5.0),
+                              side: BorderSide(color: Colors.blue)),
+                          highlightColor: Colors.black,
+                          child: new Text(
+                            'Checkout',
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => PaymentMethod(
+                                        amount: total,
+                                        weight: final_weight,
+                                      )))),
                   SizedBox(
                     height: 10,
                   )

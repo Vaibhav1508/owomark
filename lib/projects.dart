@@ -41,6 +41,19 @@ class _ProjectsState extends State<Projects> {
           style: TextStyle(color: Colors.black),
           //textAlign: TextAlign.center,
         ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.turned_in_not),
+              iconSize: 30,
+              color: Colors.grey,
+              onPressed: () {}),
+          IconButton(
+            icon: Icon(Icons.note_add),
+            iconSize: 30,
+            color: Colors.grey,
+            onPressed: () {},
+          )
+        ],
         elevation: 3.0,
       ),
       body: Container(

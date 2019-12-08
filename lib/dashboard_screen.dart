@@ -19,13 +19,15 @@ import 'package:owomark/single_event.dart';
 import 'package:owomark/single_institute.dart';
 import 'package:owomark/single_product.dart';
 import 'package:owomark/single_project.dart';
+import 'package:owomark/ticket_screen.dart';
+import 'package:owomark/type_category.dart';
 import 'package:owomark/wallet_screen.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
 import 'category_screen.dart';
-import 'inst_category.dart';
+import 'models/PgItem.dart';
 import 'models/book_item.dart';
 import 'models/competition_item.drt.dart';
 import 'models/event_item.dart';
@@ -66,6 +68,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //Projects List
   List<ProjectItem> projects = new List();
 
+  //Pgs List
+  List<PgItem> pgs = new List();
+
   //Institute List
   List<InstituteItem> institutes = new List();
 
@@ -76,6 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String eventurl = 'http://owomark.com/owomarkapp/images/events/';
   String compurl = 'http://owomark.com/owomarkapp/images/competition/';
   String projurl = 'http://owomark.com/owomarkapp/images/projects/';
+  String pgurl = 'http://owomark.com/owomarkapp/images/pg/';
   String insturl = 'http://owomark.com/owomarkapp/images/classes/';
   String sliderurl = 'http://owomark.com/owomarkapp/images/offer/';
 
@@ -101,7 +107,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Text(
                     'V',
                     style: TextStyle(
-                        color: Colors.blueAccent,
+                        color: Colors.green,
                         fontSize: 28,
                         fontWeight: FontWeight.bold),
                   ),
@@ -109,26 +115,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               ListTile(
                 title: Text(
-                  'Home',
-                  style: TextStyle(fontSize: 16),
-                ),
-                trailing: Icon(Icons.home),
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => DashboardScreen())),
-              ),
-              ListTile(
-                title: Text(
                   'Institutes',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.collections_bookmark),
                 onTap: () => Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => InstCategory())),
+                    context, MaterialPageRoute(builder: (_) => TypeCategory())),
               ),
               ListTile(
                 title: Text(
                   'Wallet',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.account_balance_wallet),
                 onTap: () => Navigator.push(
@@ -137,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ListTile(
                 title: Text(
                   'Owoquiz',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.note),
                 onTap: () => Navigator.push(
@@ -147,7 +144,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ListTile(
                 title: Text(
                   'Owosell',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.compare_arrows),
                 onTap: () => Navigator.push(
@@ -156,7 +153,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ListTile(
                 title: Text(
                   'Profile',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.person),
                 onTap: () => Navigator.push(context,
@@ -165,9 +162,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ListTile(
                 title: Text(
                   'Messages',
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 onTap: () => Navigator.push(
                     context, MaterialPageRoute(builder: (_) => HomeScreen())),
@@ -176,28 +171,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ListTile(
                 title: Text(
                   'Shopping cart',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.shopping_cart),
                 onTap: () => Navigator.push(
                     context, MaterialPageRoute(builder: (_) => CartScreen())),
               ),
+              Divider(),
               ListTile(
                 title: Text(
-                  'Orders',
-                  style: TextStyle(fontSize: 16),
+                  'Your Orders',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.shopping_basket),
                 onTap: () => Navigator.push(
                     context, MaterialPageRoute(builder: (_) => OrderScreen())),
               ),
+              ListTile(
+                title: Text(
+                  'Your Tickets',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                trailing: Icon(Icons.card_giftcard),
+                onTap: () => Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => TicketScreen())),
+              ),
               Divider(),
               ListTile(
                 title: Text(
                   'Notification',
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.notifications),
                 onTap: () => Navigator.push(context,
@@ -206,9 +209,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ListTile(
                 title: Text(
                   'Logout',
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.arrow_forward),
               ),
@@ -373,7 +374,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
               SizedBox(
-                height: 40,
+                height: 20,
+              ),
+              images.length == 0 ? Text('') : buildSlider2(),
+              SizedBox(
+                height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -625,6 +630,58 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ),
+              SizedBox(
+                height: 40,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Near By Pg",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    child: Text("All"),
+                    onTap: () => Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => Projects())),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              pgs.length == 0
+                  ? Center(
+                      child: Text(
+                        "No Pg Found",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w400),
+                      ),
+                    )
+                  : Container(
+                      height: 130,
+                      child: ListView.builder(
+                        itemCount: pgs.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = pgs[index];
+
+                          return GestureDetector(
+                            child: makeProject(
+                                image: pgurl + item.imageUrl, title: item.name),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => SingleProject(
+                                          project_id: item.id,
+                                        ))),
+                          );
+                        },
+                      ),
+                    ),
             ],
           ),
         ));
@@ -641,6 +698,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     getBestDeals(context);
     getProjects(context);
     getInstitutes(context);
+    getPg(context);
   }
 
   getNotifications(context) async {
@@ -819,6 +877,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
           for (int i = 0; i < list.length; i++) {
             EventItem eventItem = EventItem.fromMap(list[i]);
             events.add(eventItem);
+          }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  //Events API
+
+  getPg(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getPgs('ahmedabad');
+
+    response.then((action) async {
+      print(action.toString());
+
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            PgItem eventItem = PgItem.fromMap(list[i]);
+            pgs.add(eventItem);
           }
           setState(() {});
         } else {
@@ -1067,11 +1153,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget buildSlider() {
     return Container(
-      height: 200,
+      height: 140,
       child: Swiper(
         itemCount: images.length,
-        viewportFraction: 0.8,
-        scale: 0.9,
+        viewportFraction: 1.0,
+        scale: 1.0,
         pagination: SwiperPagination(),
         autoplay: true,
         itemBuilder: (BuildContext context, int index) {
@@ -1084,6 +1170,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         },
       ),
+    );
+  }
+
+  Widget buildSlider2() {
+    return GestureDetector(
+      child: Container(
+        height: 150,
+        child: Swiper(
+          itemCount: images.length,
+          viewportFraction: 0.8,
+          scale: 0.9,
+          pagination: SwiperPagination(),
+          autoplay: true,
+          itemBuilder: (BuildContext context, int index) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: Image.network(
+                sliderurl + images[index].imageUrl,
+                fit: BoxFit.cover,
+              ),
+            );
+          },
+        ),
+      ),
+      onTap: () => Navigator.push(
+          context, MaterialPageRoute(builder: (_) => Category(panel_id: '1'))),
     );
   }
 }

@@ -58,6 +58,17 @@ class _NewsFeedState extends State<NewsFeed> {
                       builder: (_) => UploadNews(
                             comp_id: widget.comp_id,
                           ))),
+            ),
+            IconButton(
+              icon: Icon(Icons.collections_bookmark),
+              iconSize: 30.0,
+              color: Colors.grey,
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => UploadNews(
+                            comp_id: widget.comp_id,
+                          ))),
             )
           ],
         ),

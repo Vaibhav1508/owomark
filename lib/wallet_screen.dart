@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/widgets/transaction.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
@@ -15,7 +16,7 @@ class WalletScreen extends StatefulWidget {
 
 class _WalletScreenState extends State<WalletScreen> {
   ApiInterface apiInterface = new ApiInterface();
-
+  Razorpay _razorpay;
   int _currentTabIndex = 0;
   var couponcode = TextEditingController();
   var amount = TextEditingController();
@@ -92,6 +93,34 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 
+  /*
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _razorpay.clear();
+  }
+  void openCheckout() async{
+    var options = {"key":"","amount":amount,"name":"Owomark","description":"Test Payment","prefill":{"contact":"","email":""},
+      "external":["paytm"]
+  };
+    try{
+      _razorpay.open(options);
+    }catch(e){
+      debugPrint(e);
+    }
+*/
   @override
   Widget build(BuildContext context) {
     final _kTabPages = <Widget>[
@@ -269,4 +298,17 @@ class _WalletScreenState extends State<WalletScreen> {
       print(value);
     });
   }
+}
+
+void _handlePaymentSuccess(PaymentSuccessResponse response) {
+  Fluttertoast.showToast(msg: "success" + response.paymentId);
+}
+
+void _handlePaymentError(PaymentFailureResponse response) {
+  Fluttertoast.showToast(
+      msg: "error" + response.code.toString() + response.message);
+}
+
+void _handleExternalWallet(ExternalWalletResponse response) {
+  Fluttertoast.showToast(msg: "external wallet" + response.walletName);
 }

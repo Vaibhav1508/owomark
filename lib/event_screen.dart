@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:owomark/single_event.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
 import 'models/event_item.dart';
-import 'news_feed.dart';
 
 class EventScreen extends StatefulWidget {
   @override
@@ -39,15 +39,35 @@ class _EventScreenState extends State<EventScreen> {
                 )),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.search),
+              icon: Icon(Icons.add_circle),
               iconSize: 30.0,
               color: Colors.grey,
-              onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => NewsFeed(),
-                    ),
-                  )),
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  barrierDismissible:
+                      true, // false = user must tap button, true = tap outside dialog
+                  builder: (BuildContext dialogContext) {
+                    return AlertDialog(
+                      title: Text('Register Your Event'),
+                      content: Text(
+                          'In order to register your event contact Our Executive on \n 91+ 9664861917'),
+                      actions: <Widget>[
+                        RaisedButton(
+                          child: Text(
+                            'Ok',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            Navigator.of(dialogContext)
+                                .pop(); // Dismiss alert dialog
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }),
         ],
         title: Text(
           'Events',

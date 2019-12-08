@@ -258,7 +258,7 @@ class ApiInterface {
 
   getInstCategory(String panelId) async {
     Map<String, dynamic> data = new Map();
-    data['cat_id'] = panelId;
+    data['type'] = panelId;
     response = await dio.post(baseUrl + "/getInstituteCategory",
         data: data, options: options);
     return response;
@@ -297,6 +297,14 @@ class ApiInterface {
     return response;
   }
 
+  removeInstitute(String user) async {
+    Map<String, dynamic> data = new Map();
+    data['institute_id'] = user;
+    response = await dio.post(baseUrl + "/removeMyInstitute",
+        data: data, options: options);
+    return response;
+  }
+
   getSubCategory(String catId) async {
     Map<String, dynamic> data = new Map();
     data['cat_id'] = catId;
@@ -305,11 +313,52 @@ class ApiInterface {
     return response;
   }
 
+  getPgs(String catId) async {
+    Map<String, dynamic> data = new Map();
+    data['city'] = catId;
+    response = await dio.post(baseUrl + "/getPg", data: data, options: options);
+    return response;
+  }
+
+  bookTicket(
+    String event,
+    String userId,
+    String name,
+    String phone,
+    String amount,
+  ) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['event'] = event;
+    data['name'] = name;
+    data['phone'] = phone;
+    data['total'] = amount;
+    response =
+        await dio.post(baseUrl + "/bookTicket", data: data, options: options);
+    return response;
+  }
+
   getProducts(String subId) async {
     Map<String, dynamic> data = new Map();
     data['sub_id'] = subId;
     response =
         await dio.post(baseUrl + "/getProducts", data: data, options: options);
+    return response;
+  }
+
+  getQuiz(String subId) async {
+    Map<String, dynamic> data = new Map();
+    data['sub_id'] = subId;
+    response =
+        await dio.post(baseUrl + "/getAllQuiz", data: data, options: options);
+    return response;
+  }
+
+  getSingleQuiz(String subId) async {
+    Map<String, dynamic> data = new Map();
+    data['quiz_id'] = subId;
+    response = await dio.post(baseUrl + "/getSingleQuiz",
+        data: data, options: options);
     return response;
   }
 

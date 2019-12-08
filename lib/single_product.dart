@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:owomark/cart_screen.dart';
 import 'package:owomark/models/book_item.dart';
 import 'package:sweetalert/sweetalert.dart';
 
@@ -43,9 +44,15 @@ class _SingleProductState extends State<SingleProduct> {
                   )),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.add_circle_outline),
+                icon: Icon(Icons.shopping_cart),
+                iconSize: 30,
+                color: Colors.grey,
+                onPressed: () => Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => CartScreen()))),
+            IconButton(
+              icon: Icon(Icons.add_shopping_cart),
               iconSize: 30,
-              color: Colors.red,
+              color: Colors.blue,
               onPressed: () {
                 addToCart(context);
               },
@@ -164,11 +171,15 @@ class _SingleProductState extends State<SingleProduct> {
                           ),
                           Divider(),
                           ListTile(
-                            title: Text('Additional Details 1'),
+                            title: Text('Return Policy'),
+                            trailing: Text(
+                              item.returnamount + ' Rs',
+                              style: TextStyle(fontSize: 18.0),
+                            ),
                           ),
                           Divider(),
                           ListTile(
-                            title: Text('Additional Details 2'),
+                            title: Text('All Price include GST'),
                           )
                         ],
                       ));

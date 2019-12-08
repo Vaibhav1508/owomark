@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:owomark/event_pament.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 import 'api_interface.dart';
@@ -20,6 +21,10 @@ class _SingleEventState extends State<SingleEvent> {
   GlobalKey<ScaffoldState> key = new GlobalKey();
 
   ProgressDialog pr;
+
+  int amount;
+
+  String event;
 
   ApiInterface apiInterface = new ApiInterface();
 
@@ -61,16 +66,6 @@ class _SingleEventState extends State<SingleEvent> {
                     builder: (_) => DashboardScreen(),
                   ),
                 )),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add_circle),
-            iconSize: 30,
-            color: Colors.blue,
-            onPressed: () {
-              pr.show();
-            },
-          )
-        ],
         title: Text(
           'Event Details',
           style: TextStyle(color: Colors.black),
@@ -145,12 +140,29 @@ class _SingleEventState extends State<SingleEvent> {
                     ),
                     Divider(),
                     ListTile(
-                      title: Text('Additional Details 1'),
+                      title: Text('All Price include GST'),
                     ),
                     Divider(),
-                    ListTile(
-                      title: Text('Additional Details 2'),
-                    )
+                    RaisedButton(
+                        color: Colors.blue,
+                        padding: EdgeInsets.all(
+                          10.0,
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(5.0),
+                            side: BorderSide(color: Colors.blue)),
+                        highlightColor: Colors.black,
+                        child: new Text(
+                          'Buy Now',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => EventPayment(
+                                      amount: amount,
+                                      event: event,
+                                    ))))
                   ],
                 ),
               );
@@ -179,9 +191,14 @@ class _SingleEventState extends State<SingleEvent> {
           List<dynamic> list = data['result'];
           for (int i = 0; i < list.length; i++) {
             EventItem notificationItem = EventItem.fromMap(list[i]);
+
             events.add(notificationItem);
+
+            setState(() {
+              amount = int.parse(events[i].price);
+              event = events[i].id;
+            });
           }
-          setState(() {});
         } else {
           print('error');
         }

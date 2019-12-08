@@ -16,9 +16,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           fontFamily: 'MavenProMedium',
-          primaryColor: Colors.blueAccent,
+          primaryColor: Colors.green,
           accentColor: Color(0xFFFE9EB),
-          hintColor: Colors.blueAccent),
+          hintColor: Colors.green),
       home: WelcomePage(),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:owomark/models/institute_item.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 import '../api_interface.dart';
 
@@ -136,6 +137,23 @@ class _MyInstituteState extends State<MyInstitute> {
                                     Icons.restore_from_trash,
                                     color: Colors.red,
                                   ),
+                                  onPressed: () {
+                                    SweetAlert.show(context,
+                                        title: "Are you sure ?",
+                                        subtitle: "Your book will be deleted",
+                                        style: SweetAlertStyle.confirm,
+                                        showCancelButton: true,
+                                        onPress: (bool isConfirm) {
+                                      if (isConfirm) {
+                                        institutes.clear();
+                                        removeInstitute(context, item.id);
+                                        SweetAlert.show(context,
+                                            style: SweetAlertStyle.success,
+                                            title: "Deleted");
+                                        return false;
+                                      }
+                                    });
+                                  },
                                 ),
                               ],
                             )
@@ -170,6 +188,29 @@ class _MyInstituteState extends State<MyInstitute> {
             InstituteItem notificationItem = InstituteItem.fromMap(list[i]);
             institutes.add(notificationItem);
           }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  //remove book
+
+  removeInstitute(context, String id) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.removeInstitute(id);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          getInstitutes(context);
           setState(() {});
         } else {
           print('error');

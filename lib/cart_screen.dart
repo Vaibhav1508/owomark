@@ -224,7 +224,7 @@ class _CartScreenState extends State<CartScreen> {
                                               IconButton(
                                                 icon: Icon(
                                                   Icons.indeterminate_check_box,
-                                                  color: Colors.blue,
+                                                  color: Colors.green,
                                                 ),
                                                 onPressed: () {
                                                   if (item.qty == "1") {
@@ -262,13 +262,13 @@ class _CartScreenState extends State<CartScreen> {
                   cartitem.length == 0
                       ? Text('')
                       : RaisedButton(
-                          color: Colors.blue,
+                          color: Colors.green,
                           padding: EdgeInsets.all(
                             10.0,
                           ),
                           shape: RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(5.0),
-                              side: BorderSide(color: Colors.blue)),
+                              side: BorderSide(color: Colors.green)),
                           highlightColor: Colors.black,
                           child: new Text(
                             'Checkout',

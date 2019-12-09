@@ -47,13 +47,13 @@ class _OwosellScreenState extends State<OwosellScreen> {
 
   Widget _savebutton() {
     return RaisedButton(
-        color: Colors.blue,
+        color: Colors.green,
         padding: EdgeInsets.all(
           10.0,
         ),
         shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0),
-            side: BorderSide(color: Colors.blue)),
+            side: BorderSide(color: Colors.green)),
         highlightColor: Colors.black,
         child: new Text(
           'Submit',
@@ -103,11 +103,11 @@ class _OwosellScreenState extends State<OwosellScreen> {
         ),
         shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0),
-            side: BorderSide(color: Colors.blue)),
+            side: BorderSide(color: Colors.green)),
         highlightColor: Colors.black,
         child: new Text(
           'Choose Image',
-          style: TextStyle(color: Colors.blue, fontSize: 20),
+          style: TextStyle(color: Colors.green, fontSize: 20),
         ),
         onPressed: () {
           setState(() {
@@ -118,13 +118,13 @@ class _OwosellScreenState extends State<OwosellScreen> {
 
   Widget _rechargeButton() {
     return RaisedButton(
-        color: Colors.blue,
+        color: Colors.green,
         padding: EdgeInsets.all(
           15.0,
         ),
         shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0),
-            side: BorderSide(color: Colors.blue)),
+            side: BorderSide(color: Colors.green)),
         highlightColor: Colors.black,
         child: new Text(
           'Recharge',
@@ -333,7 +333,7 @@ class _OwosellScreenState extends State<OwosellScreen> {
           ),
           CircleAvatar(
             radius: 35,
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.green,
             child: Icon(
               Icons.add,
               color: Colors.white,

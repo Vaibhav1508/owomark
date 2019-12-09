@@ -66,7 +66,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 ),
                 onTap: () {},
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.green,
                   child: Icon(
                     Icons.person_pin,
                     color: Colors.white,
@@ -114,7 +114,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 ),
                 onTap: () {},
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.green,
                   child: Icon(
                     Icons.account_balance_wallet,
                     color: Colors.white,

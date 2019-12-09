@@ -62,7 +62,7 @@ class _MyInstituteState extends State<MyInstitute> {
                               children: <Widget>[
                                 CircleAvatar(
                                   radius: 30.0,
-                                  /* backgroundColor: Colors.blue,
+                                  /* backgroundColor: Colors.green,
                               child: Icon(
                                 Icons.book,
                                 color: Colors.white,

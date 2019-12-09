@@ -114,7 +114,7 @@ class _SingleProjectState extends State<SingleProject> {
                         children: <Widget>[
                           Text(
                             'Message',
-                            style: TextStyle(fontSize: 16, color: Colors.blue),
+                            style: TextStyle(fontSize: 16, color: Colors.green),
                           ),
                           SizedBox(
                             height: 10,
@@ -123,7 +123,7 @@ class _SingleProjectState extends State<SingleProject> {
                         ],
                       ),
                       leading: CircleAvatar(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.green,
                         child: Icon(
                           Icons.person_outline,
                           color: Colors.white,

@@ -1,31 +1,57 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:owomark/chat_screen.dart';
-import 'package:owomark/models/institute_item.dart';
+import 'package:owomark/event_pament.dart';
+import 'package:owomark/models/PgItem.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
 
-class SingleInstitute extends StatefulWidget {
-  final String project_id;
+class SinglePg extends StatefulWidget {
+  final String event_id;
 
-  SingleInstitute({Key key, this.project_id}) : super(key: key);
+  SinglePg({Key key, this.event_id}) : super(key: key);
 
   @override
-  _SingleInstituteState createState() => _SingleInstituteState();
+  _SinglePgState createState() => _SinglePgState();
 }
 
-class _SingleInstituteState extends State<SingleInstitute> {
+class _SinglePgState extends State<SinglePg> {
+  GlobalKey<ScaffoldState> key = new GlobalKey();
+
+  ProgressDialog pr;
+
+  int amount;
+
+  String event;
+
   ApiInterface apiInterface = new ApiInterface();
 
   //Event List
-  List<InstituteItem> institute = new List();
+  List<PgItem> events = new List();
 
-  String insturl = 'http://owomark.com/owomarkapp/images/classes/';
+  String eventurl = 'http://owomark.com/owomarkapp/images/pg/';
 
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: true, showLogs: true);
+
+    pr.style(
+        message: 'Please Wait...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600));
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -41,7 +67,7 @@ class _SingleInstituteState extends State<SingleInstitute> {
                   ),
                 )),
         title: Text(
-          'Institute Details',
+          'Pg Details',
           style: TextStyle(color: Colors.black),
           //textAlign: TextAlign.center,
         ),
@@ -50,15 +76,15 @@ class _SingleInstituteState extends State<SingleInstitute> {
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: ListView.builder(
-            itemCount: institute.length,
+            itemCount: events.length,
             itemBuilder: (BuildContext context, int index) {
-              final item = institute[index];
+              final item = events[index];
 
               return SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
                     Image.network(
-                      insturl + item.imageUrl,
+                      eventurl + item.imageUrl,
                       height: 200,
                       width: MediaQuery.of(context).size.width * 5,
                     ),
@@ -76,27 +102,26 @@ class _SingleInstituteState extends State<SingleInstitute> {
                     Divider(),
                     ListTile(
                       title: Text(
-                        'Location',
+                        'Description',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
-                      trailing: Icon(Icons.location_on),
+                      trailing: Icon(Icons.note),
                     ),
                     ListTile(
-                      title: Text(item.location),
+                      title: Text(item.desc),
                     ),
                     Divider(),
                     ListTile(
                       title: Text(
-                        'Contact',
+                        'Location',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
-                      trailing: Icon(Icons.phone),
-                      onTap: () {},
+                      trailing: Icon(Icons.add_location),
                     ),
                     ListTile(
-                      title: Text(item.contact),
+                      title: Text(item.location),
                     ),
                     Divider(),
                     ListTile(
@@ -105,7 +130,7 @@ class _SingleInstituteState extends State<SingleInstitute> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
-                      trailing: Icon(Icons.location_city),
+                      trailing: Icon(Icons.location_on),
                     ),
                     ListTile(
                       title: Text(item.address),
@@ -113,82 +138,39 @@ class _SingleInstituteState extends State<SingleInstitute> {
                     Divider(),
                     ListTile(
                       title: Text(
-                        'Email',
+                        'Rent Amount ',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
-                      trailing: Icon(Icons.email),
-                    ),
-                    ListTile(
-                      title: Text(item.email),
-                    ),
-                    Divider(),
-                    ListTile(
-                      title: Text(
-                        'Tutor',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      trailing: Icon(Icons.person_pin),
+                      trailing: Icon(Icons.arrow_forward_ios),
                     ),
                     ListTile(
                       title: Text(
-                        item.tutor,
+                        item.price + ' Rs',
                         style: TextStyle(color: Colors.orange, fontSize: 22),
                       ),
                     ),
                     Divider(),
-                    ListTile(
-                      title: Text(
-                        'Tutor Experience',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      trailing: Icon(Icons.timelapse),
-                    ),
-                    ListTile(
-                      title: Text(item.exp),
-                    ),
-                    Divider(),
-                    ListTile(
-                      title: Text(
-                        'Tutor Education',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      trailing: Icon(Icons.book),
-                    ),
-                    ListTile(
-                      title: Text(item.education),
-                    ),
-                    Divider(),
-                    ListTile(
-                      title: Text(
-                        'Contact Owner',
-                        style: TextStyle(fontSize: 18, color: Colors.green),
-                      ),
-                    ),
-                    Divider(),
-                    ListTile(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => ChatScreen(
-                                    user: item.user,
-                                  ))),
-                      title: Text('Customer ' + item.user),
-                      trailing: Container(
-                        child: Icon(Icons.email),
-                      ),
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.green,
-                        child: Icon(
-                          Icons.person_outline,
-                          color: Colors.white,
+                    RaisedButton(
+                        color: Colors.green,
+                        padding: EdgeInsets.all(
+                          10.0,
                         ),
-                        radius: 25,
-                      ),
-                    )
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(5.0),
+                            side: BorderSide(color: Colors.green)),
+                        highlightColor: Colors.black,
+                        child: new Text(
+                          'Contact Owner',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => EventPayment(
+                                      amount: amount,
+                                      event: event,
+                                    ))))
                   ],
                 ),
               );
@@ -200,13 +182,14 @@ class _SingleInstituteState extends State<SingleInstitute> {
   @override
   void initState() {
     super.initState();
+
     getEvents(context);
   }
 
   getEvents(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getInstituteById(widget.project_id);
+    Future<dynamic> response = apiInterface.getPgByIds(widget.event_id);
 
     response.then((action) async {
       print(action.toString());
@@ -215,10 +198,15 @@ class _SingleInstituteState extends State<SingleInstitute> {
         if (data["status"] == "200") {
           List<dynamic> list = data['result'];
           for (int i = 0; i < list.length; i++) {
-            InstituteItem notificationItem = InstituteItem.fromMap(list[i]);
-            institute.add(notificationItem);
+            PgItem notificationItem = PgItem.fromMap(list[i]);
+
+            events.add(notificationItem);
+
+            setState(() {
+              amount = int.parse(events[i].price);
+              event = events[i].id;
+            });
           }
-          setState(() {});
         } else {
           print('error');
         }

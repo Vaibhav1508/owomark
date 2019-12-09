@@ -104,11 +104,27 @@ class ApiInterface {
     return response;
   }
 
+  getTickets(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    response =
+        await dio.post(baseUrl + "/getTickets", data: data, options: options);
+    return response;
+  }
+
   getSingleEvent(String userId) async {
     Map<String, dynamic> data = new Map();
     data['event_id'] = userId;
     response = await dio.post(baseUrl + "/getSingleEvent",
         data: data, options: options);
+    return response;
+  }
+
+  getPgByIds(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['id'] = userId;
+    response =
+        await dio.post(baseUrl + "/getPgById", data: data, options: options);
     return response;
   }
 

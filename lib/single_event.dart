@@ -144,13 +144,13 @@ class _SingleEventState extends State<SingleEvent> {
                     ),
                     Divider(),
                     RaisedButton(
-                        color: Colors.blue,
+                        color: Colors.green,
                         padding: EdgeInsets.all(
                           10.0,
                         ),
                         shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(5.0),
-                            side: BorderSide(color: Colors.blue)),
+                            side: BorderSide(color: Colors.green)),
                         highlightColor: Colors.black,
                         child: new Text(
                           'Buy Now',

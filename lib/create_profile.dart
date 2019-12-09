@@ -105,13 +105,13 @@ class _CreateProfileState extends State<CreateProfile> {
 
   Widget _savebutton() {
     return RaisedButton(
-        color: Colors.blue,
+        color: Colors.green,
         padding: EdgeInsets.all(
           15.0,
         ),
         shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0),
-            side: BorderSide(color: Colors.blue)),
+            side: BorderSide(color: Colors.green)),
         highlightColor: Colors.black,
         child: new Text(
           'Save Changes',
@@ -162,7 +162,7 @@ class _CreateProfileState extends State<CreateProfile> {
         children: <Widget>[
           CircleAvatar(
             radius: 40.0,
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.green,
             child: Icon(
               Icons.person,
               size: 45,

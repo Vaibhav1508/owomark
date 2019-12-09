@@ -91,7 +91,7 @@ class _InstCategoryState extends State<InstCategory> {
                                 children: <Widget>[
                                   CircleAvatar(
                                       radius: 20.0,
-                                      backgroundColor: Colors.blue,
+                                      backgroundColor: Colors.green,
                                       child: Icon(
                                         Icons.arrow_forward_ios,
                                         color: Colors.white,

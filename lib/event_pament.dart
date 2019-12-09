@@ -68,7 +68,7 @@ class _EventPaymentState extends State<EventPayment> {
                 ),
                 onTap: () {},
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.green,
                   child: Icon(
                     Icons.account_balance_wallet,
                     color: Colors.white,

@@ -15,8 +15,8 @@ class PgItem {
       'title': this.name,
       'img': this.imageUrl,
       'location': this.location,
-      'address': this.address,
-      'price': this.price,
+      'adress': this.address,
+      'rent': this.price,
       'description': this.desc,
     };
   }
@@ -27,8 +27,8 @@ class PgItem {
       name: map['title'] as String,
       imageUrl: map['img'] as String,
       location: map['location'] as String,
-      address: map['address'] as String,
-      price: map['price'] as String,
+      address: map['adress'] as String,
+      price: map['rent'] as String,
       desc: map['description'] as String,
     );
   }

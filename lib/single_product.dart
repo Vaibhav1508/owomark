@@ -52,7 +52,7 @@ class _SingleProductState extends State<SingleProduct> {
             IconButton(
               icon: Icon(Icons.add_shopping_cart),
               iconSize: 30,
-              color: Colors.blue,
+              color: Colors.green,
               onPressed: () {
                 addToCart(context);
               },

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:owomark/chat_screen.dart';
-import 'package:owomark/models/appcategory_model.dart';
-import 'package:owomark/models/message_model.dart';
 import 'package:owomark/models/subcategory_model.dart';
 
 class SubCategoryItem extends StatelessWidget {
@@ -48,11 +46,12 @@ class SubCategoryItem extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             CircleAvatar(
-                              radius: 20.0,
-                              backgroundColor: Colors.blue,
-                              child: Icon(Icons.label_important,
-                              color: Colors.white,)
-                            ),
+                                radius: 20.0,
+                                backgroundColor: Colors.green,
+                                child: Icon(
+                                  Icons.label_important,
+                                  color: Colors.white,
+                                )),
                             SizedBox(
                               width: 10.0,
                             ),
@@ -69,7 +68,6 @@ class SubCategoryItem extends StatelessWidget {
                                 SizedBox(
                                   height: 5.0,
                                 ),
-
                               ],
                             )
                           ],

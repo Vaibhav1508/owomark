@@ -176,7 +176,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     title: Column(
                       children: <Widget>[
                         CircleAvatar(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: Colors.green,
                           child: Icon(Icons.person_outline),
                           radius: 25,
                         ),

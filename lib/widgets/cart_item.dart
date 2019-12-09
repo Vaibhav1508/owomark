@@ -95,7 +95,7 @@ class _CartItemState extends State<CartItem> {
                             ),
 
                             IconButton(
-                              icon: Icon(Icons.add,color: Colors.blue,),
+                              icon: Icon(Icons.add,color: Colors.green,),
                             )
 
                           ],

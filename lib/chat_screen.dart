@@ -33,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
       width: MediaQuery.of(context).size.width * 0.75,
       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
       decoration: BoxDecoration(
-          color: isMe ? Colors.blue : Colors.lightBlueAccent,
+          color: isMe ? Colors.green : Colors.lightBlueAccent,
           borderRadius: isMe
               ? BorderRadius.only(
                   topLeft: Radius.circular(15.0),

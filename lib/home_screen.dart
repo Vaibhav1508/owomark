@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               children: <Widget>[
                                                 CircleAvatar(
                                                   radius: 30.0,
-                                                  backgroundColor: Colors.blue,
+                                                  backgroundColor: Colors.green,
                                                   child: Icon(
                                                     Icons.person_pin,
                                                     size: 35,

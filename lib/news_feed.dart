@@ -196,7 +196,7 @@ class _NewsFeedState extends State<NewsFeed> {
       width: 25,
       height: 25,
       decoration: BoxDecoration(
-        color: Colors.blue,
+        color: Colors.green,
         shape: BoxShape.circle,
         border: Border.all(color: Colors.white),
       ),
@@ -220,14 +220,14 @@ class _NewsFeedState extends State<NewsFeed> {
           children: <Widget>[
             Icon(
               Icons.thumb_up,
-              color: isActive ? Colors.blue : Colors.grey,
+              color: isActive ? Colors.green : Colors.grey,
             ),
             SizedBox(
               width: 5,
             ),
             Text(
               isActive ? "Liked" : "Like",
-              style: TextStyle(color: isActive ? Colors.blue : Colors.grey),
+              style: TextStyle(color: isActive ? Colors.green : Colors.grey),
             ),
           ],
         ),

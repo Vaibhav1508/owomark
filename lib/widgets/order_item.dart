@@ -59,7 +59,7 @@ class _OrderItemState extends State<OrderItem> {
                           children: <Widget>[
                             CircleAvatar(
                               radius: 20.0,
-                              backgroundColor: Colors.blue,
+                              backgroundColor: Colors.green,
                               child: Icon(
                                 Icons.shopping_basket,
                                 color: Colors.white,

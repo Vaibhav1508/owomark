@@ -152,7 +152,7 @@ class _SingleBookState extends State<SingleBook> {
                     ListTile(
                       title: Text(
                         'Contact Seller',
-                        style: TextStyle(fontSize: 18, color: Colors.blue),
+                        style: TextStyle(fontSize: 18, color: Colors.green),
                       ),
                     ),
                     Divider(),
@@ -168,7 +168,7 @@ class _SingleBookState extends State<SingleBook> {
                         child: Icon(Icons.email),
                       ),
                       leading: CircleAvatar(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.green,
                         child: Icon(
                           Icons.person_outline,
                           color: Colors.white,

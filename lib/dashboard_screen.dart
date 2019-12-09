@@ -17,6 +17,7 @@ import 'package:owomark/projects.dart';
 import 'package:owomark/quiz.dart';
 import 'package:owomark/single_event.dart';
 import 'package:owomark/single_institute.dart';
+import 'package:owomark/single_pg.dart';
 import 'package:owomark/single_product.dart';
 import 'package:owomark/single_project.dart';
 import 'package:owomark/ticket_screen.dart';
@@ -603,7 +604,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               projects.length == 0
                   ? Center(
                       child: Text(
-                        "No Projects Found",
+                        "No Data Found",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w400),
                       ),
@@ -617,7 +618,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           final item = projects[index];
 
                           return GestureDetector(
-                            child: makeProject(
+                            child: makeActivity(
                                 image: projurl + item.imageUrl,
                                 title: item.name),
                             onTap: () => Navigator.push(
@@ -628,8 +629,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         ))),
                           );
                         },
-                      ),
-                    ),
+                      )),
               SizedBox(
                 height: 40,
               ),
@@ -656,7 +656,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               pgs.length == 0
                   ? Center(
                       child: Text(
-                        "No Pg Found",
+                        "No Data Found",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w400),
                       ),
@@ -670,18 +670,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           final item = pgs[index];
 
                           return GestureDetector(
-                            child: makeProject(
+                            child: makeActivity(
                                 image: pgurl + item.imageUrl, title: item.name),
                             onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => SingleProject(
-                                          project_id: item.id,
+                                    builder: (_) => SinglePg(
+                                          event_id: item.id,
                                         ))),
                           );
                         },
-                      ),
-                    ),
+                      )),
             ],
           ),
         ));

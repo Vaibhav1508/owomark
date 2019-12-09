@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:owomark/chat_screen.dart';
 import 'package:owomark/models/appcategory_model.dart';
-import 'package:owomark/models/message_model.dart';
-import 'package:owomark/subcategory.dart';
-import 'package:owomark/widgets/subcategory_item.dart';
 
 class CategoryItem extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-
     return Expanded(
       child: Container(
           padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
@@ -33,8 +27,8 @@ class CategoryItem extends StatelessWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                     // builder: (_) => SubCategory(),
-                    ),
+                        // builder: (_) => SubCategory(),
+                        ),
                   ),
                   child: Container(
                     // width: 300,
@@ -51,11 +45,12 @@ class CategoryItem extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             CircleAvatar(
-                              radius: 20.0,
-                              backgroundColor: Colors.blue,
-                              child: Icon(Icons.photo_library,
-                              color: Colors.white,)
-                            ),
+                                radius: 20.0,
+                                backgroundColor: Colors.green,
+                                child: Icon(
+                                  Icons.photo_library,
+                                  color: Colors.white,
+                                )),
                             SizedBox(
                               width: 10.0,
                             ),
@@ -72,7 +67,6 @@ class CategoryItem extends StatelessWidget {
                                 SizedBox(
                                   height: 5.0,
                                 ),
-
                               ],
                             )
                           ],

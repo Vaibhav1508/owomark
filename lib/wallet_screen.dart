@@ -23,13 +23,13 @@ class _WalletScreenState extends State<WalletScreen> {
 
   Widget _savebutton() {
     return RaisedButton(
-        color: Colors.blue,
+        color: Colors.green,
         padding: EdgeInsets.all(
           15.0,
         ),
         shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0),
-            side: BorderSide(color: Colors.blue)),
+            side: BorderSide(color: Colors.green)),
         highlightColor: Colors.black,
         child: new Text(
           'Add Money',
@@ -40,13 +40,13 @@ class _WalletScreenState extends State<WalletScreen> {
 
   Widget _rechargeButton() {
     return RaisedButton(
-        color: Colors.blue,
+        color: Colors.green,
         padding: EdgeInsets.all(
           15.0,
         ),
         shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0),
-            side: BorderSide(color: Colors.blue)),
+            side: BorderSide(color: Colors.green)),
         highlightColor: Colors.black,
         child: new Text(
           'Recharge',
@@ -132,7 +132,7 @@ class _WalletScreenState extends State<WalletScreen> {
           ),
           CircleAvatar(
             radius: 35,
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.green,
             child: Icon(
               Icons.card_giftcard,
               color: Colors.white,
@@ -167,7 +167,7 @@ class _WalletScreenState extends State<WalletScreen> {
           ),
           CircleAvatar(
             radius: 35,
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.green,
             child: Icon(
               Icons.account_balance_wallet,
               color: Colors.white,

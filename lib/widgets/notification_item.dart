@@ -46,7 +46,7 @@ class _NotificationItemState extends State<NotificationItem> {
                           children: <Widget>[
                             CircleAvatar(
                               radius: 25,
-                              backgroundColor: Colors.blue,
+                              backgroundColor: Colors.green,
                               child: Icon(Icons.notifications,color: Colors.white,),
                             ),
                             SizedBox(

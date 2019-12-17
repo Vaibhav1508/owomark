@@ -30,6 +30,16 @@ class ApiInterface {
     return response;
   }
 
+  getNews(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    response = await dio.post(baseUrl + "/getNotification",
+        data: data, options: options);
+    return response;
+  }
+
+  
+
   getDashboardBooks(String userId) async {
     Map<String, dynamic> data = new Map();
     data['user_id'] = 'id';
@@ -59,6 +69,25 @@ class ApiInterface {
     data['user_id'] = 'id';
     response =
         await dio.post(baseUrl + "/getOffers", data: data, options: options);
+    return response;
+  }
+
+  getSlider2(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = 'id';
+    response =
+        await dio.post(baseUrl + "/getSlider", data: data, options: options);
+    return response;
+  }
+
+   sendMessage(String sender,String receiver,String msg) async {
+    Map<String, dynamic> data = new Map();
+    data['sender'] = sender;
+    data['receiver'] = receiver;
+    data['msg'] = msg;
+
+    response =
+        await dio.post(baseUrl + "/sendMessage", data: data, options: options);
     return response;
   }
 
@@ -160,6 +189,19 @@ class ApiInterface {
     return response;
   }
 
+   updateProfile(String userId,String fname,String lname,String city,String
+   pincode) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    data['fname'] = fname;
+    data['lname'] = lname;
+    data['city'] = city;
+    data['pincode'] = pincode;
+    response = await dio.post(baseUrl + "/updateProfile",
+        data: data, options: options);
+    return response;
+  }
+
   getPayment(String userId, String weight, String total) async {
     Map<String, dynamic> data = new Map();
     data['user_id'] = userId;
@@ -177,6 +219,7 @@ class ApiInterface {
         data: data, options: options);
     return response;
   }
+
 
   addNews(String userId, String compId, String image, String url) async {
     Map<String, dynamic> data = new Map();
@@ -199,6 +242,14 @@ class ApiInterface {
     return response;
   }
 
+getMyNewsFeed(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    response =
+        await dio.post(baseUrl + "/getMyNewsFeed", data: data, options: options);
+    return response;
+  }
+
   likePost(String userId, String compId) async {
     Map<String, dynamic> data = new Map();
     data['user_id'] = userId;
@@ -208,10 +259,27 @@ class ApiInterface {
     return response;
   }
 
+  removeNewsFeed(String postId) async {
+    Map<String, dynamic> data = new Map();
+    
+    data['post_id'] = postId;
+    response =
+        await dio.post(baseUrl + "/removeNewsFeed", data: data, options: options);
+    return response;
+  }
+
   getInstituteByUser(String userId) async {
     Map<String, dynamic> data = new Map();
     data['user_id'] = userId;
     response = await dio.post(baseUrl + "/getInstituteByUser",
+        data: data, options: options);
+    return response;
+  }
+
+  getReview(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['id'] = userId;
+    response = await dio.post(baseUrl + "/getReview",
         data: data, options: options);
     return response;
   }
@@ -240,9 +308,10 @@ class ApiInterface {
     return response;
   }
 
-  getInstituteById(String userId) async {
+  getInstituteById(String userId,String instId) async {
     Map<String, dynamic> data = new Map();
-    data['institute_id'] = userId;
+    data['institute_id'] = instId;
+      data['user_id'] = userId;
     response = await dio.post(baseUrl + "/getSingleInstitute",
         data: data, options: options);
     return response;
@@ -260,6 +329,14 @@ class ApiInterface {
     Map<String, dynamic> data = new Map();
     data['user_id'] = userId;
     response = await dio.post(baseUrl + "/getUserTransaction",
+        data: data, options: options);
+    return response;
+  }
+
+   getWidthrawal(String userId) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = userId;
+    response = await dio.post(baseUrl + "/getWidthrawal",
         data: data, options: options);
     return response;
   }
@@ -305,11 +382,43 @@ class ApiInterface {
     return response;
   }
 
+  getMyProjects(String user) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = user;
+    response =
+        await dio.post(baseUrl + "/getMyProjects", data: data, options: options);
+    return response;
+  }
+
+   getMyPgs(String user) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = user;
+    response =
+        await dio.post(baseUrl + "/getMyPg", data: data, options: options);
+    return response;
+  }
+
   removeMyBook(String user) async {
     Map<String, dynamic> data = new Map();
     data['book_id'] = user;
     response =
         await dio.post(baseUrl + "/removeMyBook", data: data, options: options);
+    return response;
+  }
+
+  removeMyPgs(String user) async {
+    Map<String, dynamic> data = new Map();
+    data['pg_id'] = user;
+    response =
+        await dio.post(baseUrl + "/removeMyPg", data: data, options: options);
+    return response;
+  }
+
+   removeMyProject(String user) async {
+    Map<String, dynamic> data = new Map();
+    data['project_id'] = user;
+    response =
+        await dio.post(baseUrl + "/removeMyProjects", data: data, options: options);
     return response;
   }
 
@@ -325,6 +434,61 @@ class ApiInterface {
     Map<String, dynamic> data = new Map();
     data['cat_id'] = catId;
     response = await dio.post(baseUrl + "/getSubCategory",
+        data: data, options: options);
+    return response;
+  }
+
+  sendOtp(String catId) async {
+    Map<String, dynamic> data = new Map();
+    data['email'] = catId;
+    response = await dio.post(baseUrl + "/sendOtp",
+        data: data, options: options);
+    return response;
+  }
+
+   checkLogin(String email,String password) async {
+    Map<String, dynamic> data = new Map();
+    data['email'] = email;
+    data['password'] = password;
+    response = await dio.post(baseUrl + "/checkLogin",
+        data: data, options: options);
+    return response;
+  }
+
+   addMoney(String user,String amount) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = user;
+    data['amount'] = amount;
+    response = await dio.post(baseUrl + "/addMoney",
+        data: data, options: options);
+    return response;
+  }
+
+  starRating(String post,String user,double rate) async {
+    Map<String, dynamic> data = new Map();
+    data['post'] = post;
+    data['user'] = user;
+    data['rate'] = rate;
+    response = await dio.post(baseUrl + "/starRating",
+        data: data, options: options);
+    return response;
+  }
+
+  registerUser(String fname,String lname,String email,String city,String pincode,
+  String password,String mobile,String refer,String course,String sem)async {
+    Map<String, dynamic> data = new Map();
+    data['fname'] = fname;
+    data['email'] = email;
+    data['city'] = city;
+    data['pincode'] = pincode;
+    data['refer'] = refer;
+    data['password'] = password;
+    data['mobile'] = mobile;
+    data['lname'] = lname;
+    data['course'] = course;
+    data['sem'] = sem;
+
+    response = await dio.post(baseUrl + "/registerUser",
         data: data, options: options);
     return response;
   }
@@ -499,10 +663,69 @@ class ApiInterface {
     return response;
   }
 
+
+   addProject(
+      String title,
+      String desc,
+      String amount,
+      String imageurl,
+      String image,
+      String uId,
+    ) async {
+    Map<String, dynamic> data = new Map();
+    data['title'] = title;
+    data['price'] = amount;
+    data['desc'] = desc;
+    data['image'] = image;
+    data['imageurl'] = imageurl;
+    data['user_id'] = uId;
+    
+    response =
+        await dio.post(baseUrl + "/addProject", data: data, options: options);
+    return response;
+  }
+
+   addPg(
+      String title,
+      String desc,
+      String amount,
+      String imageurl,
+      String image,
+      String uId,
+      String city,
+      String location,
+      String address,
+    ) async {
+    Map<String, dynamic> data = new Map();
+    data['title'] = title;
+    data['rent'] = amount;
+    data['desc'] = desc;
+    data['image'] = image;
+    data['imageurl'] = imageurl;
+    data['user_id'] = uId;
+      data['city'] = city;
+        data['location'] = location;
+          data['address'] = address;
+    
+    response =
+        await dio.post(baseUrl + "/addPg", data: data, options: options);
+    return response;
+  }
+
   getSingleProduct(String subId) async {
     Map<String, dynamic> data = new Map();
     data['p_id'] = subId;
     response = await dio.post(baseUrl + "/getProductById",
+        data: data, options: options);
+    return response;
+  }
+
+   addWidthrawal(String uId,String phone,String amount) async {
+    Map<String, dynamic> data = new Map();
+    data['user_id'] = uId;
+    data['phone'] = phone;
+    data['amount'] = amount;
+    response = await dio.post(baseUrl + "/insertWidthrawal",
         data: data, options: options);
     return response;
   }

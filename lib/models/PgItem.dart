@@ -8,6 +8,7 @@ class PgItem {
   String address = "";
   String price = "";
   String desc = "";
+  String user = "";
 
   Map<String, dynamic> toMap() {
     return {
@@ -17,6 +18,7 @@ class PgItem {
       'location': this.location,
       'adress': this.address,
       'rent': this.price,
+      'user_id': this.user,
       'description': this.desc,
     };
   }
@@ -29,6 +31,7 @@ class PgItem {
       location: map['location'] as String,
       address: map['adress'] as String,
       price: map['rent'] as String,
+      user: map['user_id'] as String,
       desc: map['description'] as String,
     );
   }
@@ -36,6 +39,7 @@ class PgItem {
   PgItem({
     @required this.id,
     @required this.name,
+    @required this.user,
     @required this.desc,
     @required this.imageUrl,
     @required this.location,

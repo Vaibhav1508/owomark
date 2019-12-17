@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:owomark/models/users_item.dart';
 import 'package:owomark/payment_method.dart';
+import 'package:owomark/ticket_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
@@ -207,7 +209,7 @@ class _EventCheckoutState extends State<EventCheckout> {
                       style: new TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     onPressed: () {
-                      bookTicket(context, widget.eventid, '1', _name.text,
+                      bookTicket(context, widget.eventid, _name.text,
                           _mobile.text, widget.amount.toString());
                     },
                     color: Colors.blueAccent,
@@ -232,7 +234,13 @@ class _EventCheckoutState extends State<EventCheckout> {
   getProfille(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getProfile('1');
+    String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.getProfile(users);
 
     response.then((action) async {
       print(action.toString());
@@ -261,12 +269,18 @@ class _EventCheckoutState extends State<EventCheckout> {
     });
   }
 
-  bookTicket(context, String event, String userId, String name, String phone,
+  bookTicket(context, String event, String name, String phone,
       String amount) async {
     setState(() {});
 
+    String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
     Future<dynamic> response =
-        apiInterface.bookTicket(event, userId, name, phone, amount);
+        apiInterface.bookTicket(event, users, name, phone, amount);
 
     response.then((action) async {
       print(action.toString());
@@ -280,7 +294,7 @@ class _EventCheckoutState extends State<EventCheckout> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => OrderScreen(),
+                  builder: (_) => TicketScreen(),
                 ));
 
             return false;

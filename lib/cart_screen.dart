@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/models/cart_items.dart';
 import 'package:owomark/payment_method.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
@@ -303,7 +304,14 @@ class _CartScreenState extends State<CartScreen> {
   getCart(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getCart('1');
+     String user = '',city='';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+      city = prefs.getString('city');
+  
+
+    Future<dynamic> response = apiInterface.getCart(user);
 
     response.then((action) async {
       print(action.toString());

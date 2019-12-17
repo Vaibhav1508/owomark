@@ -1,8 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:owomark/reviews.dart';
+import 'package:rating_bar/rating_bar.dart';
 import 'package:owomark/chat_screen.dart';
 import 'package:owomark/models/institute_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
@@ -72,6 +76,48 @@ class _SingleInstituteState extends State<SingleInstitute> {
                     ),
                     ListTile(
                       title: Text(item.name),
+                    ),
+                    Divider(),
+                   item.rated == "1" ?  RatingBar.readOnly(
+                      //onRatingChanged: (rating) => setState(()=>rating = rating),
+                      filledIcon: Icons.star,
+                      initialRating: double.parse(item.rate),
+                      emptyIcon: Icons.star_border,
+                      halfFilledIcon: Icons.star_half,
+                      isHalfAllowed: false,
+                      filledColor: Colors.orange,
+                      emptyColor: Colors.orangeAccent,
+                      halfFilledColor: Colors.orangeAccent,
+                      size: 35,
+                    ) : RatingBar(
+                      onRatingChanged: (rating){
+                        institute.clear();
+                        starRating(context,item.id,rating);
+                      },
+                      filledIcon: Icons.star,
+                      //initialRating: double.parse(item.rate),
+                      emptyIcon: Icons.star_border,
+                      halfFilledIcon: Icons.star_half,
+                      isHalfAllowed: false,
+                      filledColor: Colors.orange,
+                      emptyColor: Colors.orangeAccent,
+                      halfFilledColor: Colors.orangeAccent,
+                      size: 35,
+                    ),
+                    SizedBox(height: 5.0,),
+                    
+                    Divider(),
+
+                    ListTile(
+                      onTap:()=> Navigator.push(context, MaterialPageRoute(
+                        builder: (_)=>Reviews(inst_id: item.id)
+                      )),
+                      title: Text(
+                        'View Reviews',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      trailing: Icon(Icons.star_border),
                     ),
                     Divider(),
                     ListTile(
@@ -169,7 +215,8 @@ class _SingleInstituteState extends State<SingleInstitute> {
                       ),
                     ),
                     Divider(),
-                    ListTile(
+                    
+                     ListTile(
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -203,10 +250,43 @@ class _SingleInstituteState extends State<SingleInstitute> {
     getEvents(context);
   }
 
+   starRating(context, String id,double rating) async {
+    setState(() {});
+     String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.starRating(id,users,rating);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          Fluttertoast.showToast(msg: 'Rated Successfully');
+
+          getEvents(context);
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
   getEvents(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getInstituteById(widget.project_id);
+    String user = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+
+    Future<dynamic> response = apiInterface.getInstituteById(user,widget.project_id);
 
     response.then((action) async {
       print(action.toString());

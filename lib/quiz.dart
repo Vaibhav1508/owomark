@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:owomark/Quiz1.dart';
 import 'package:owomark/single_book.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
@@ -63,12 +64,7 @@ class _QuizScreenState extends State<QuizScreen> {
             itemBuilder: (BuildContext context, int index) {
               final item = books[index];
               return GestureDetector(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => SingleBook(
-                              project_id: item.id,
-                            ))),
+               
                 child: makeBestCategory(
                     context: context,
                     image: producturl + item.imageUrl,
@@ -168,12 +164,17 @@ Widget makeBestCategory(
         ),
         Divider(),
         ListTile(
-          onTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (_) => Quiz1(project_id: id,))),
-          title: Text(
-            "Start Quiz",
+         title: Text(
+            "Notify Me",
             style: TextStyle(fontSize: 18, fontFamily: 'maven_black'),
           ),
+
+          onTap: (){
+             SweetAlert.show(context,
+              title: 'Saved !',
+              subtitle: 'We will notify you when quiz get available',
+              style: SweetAlertStyle.success,);
+          },
           trailing: Icon(Icons.arrow_forward_ios),
         ),
       ],

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:owomark/models/transaction_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api_interface.dart';
 
@@ -142,7 +143,13 @@ class _TransactionState extends State<Transaction> {
   getTransactions(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getTransactions('1');
+    String user = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.getTransactions(user);
 
     response.then((action) async {
       print(action.toString());

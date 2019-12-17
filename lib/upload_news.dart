@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:owomark/news_feed.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
@@ -180,8 +181,14 @@ class _UploadNewsState extends State<UploadNews> {
 
     String filename = tmpfile.path.split('/').last;
 
+     String user = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+
+
     Future<dynamic> response =
-        apiInterface.addNews('1', widget.comp_id, base64Image, filename);
+        apiInterface.addNews(user, widget.comp_id, base64Image, filename);
 
     response.then((action) async {
       print(action.toString());

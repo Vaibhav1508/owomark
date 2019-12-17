@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:owomark/chat_screen.dart';
 import 'package:owomark/event_pament.dart';
 import 'package:owomark/models/PgItem.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -167,9 +168,8 @@ class _SinglePgState extends State<SinglePg> {
                         onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => EventPayment(
-                                      amount: amount,
-                                      event: event,
+                                builder: (_) => ChatScreen(
+                                      user: item.user,
                                     ))))
                   ],
                 ),

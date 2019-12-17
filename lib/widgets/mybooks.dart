@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:owomark/models/book_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import '../api_interface.dart';
@@ -135,7 +136,13 @@ class _MyBooksState extends State<MyBooks> {
   getBooks(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getMyBook('1');
+      String user;
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+     // city = prefs.getString('city');
+  
+
+    Future<dynamic> response = apiInterface.getMyBook(user);
 
     response.then((action) async {
       print(action.toString());

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:owomark/cart_screen.dart';
 import 'package:owomark/models/book_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
@@ -220,7 +221,13 @@ class _SingleProductState extends State<SingleProduct> {
   addToCart(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.addToCart('1', widget.product_id);
+  String user;
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+     // city = prefs.getString('city');
+  
+
+    Future<dynamic> response = apiInterface.addToCart(user, widget.product_id);
 
     response.then((action) async {
       print(action.toString());

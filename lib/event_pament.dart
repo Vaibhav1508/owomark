@@ -6,6 +6,7 @@ import 'package:owomark/cart_screen.dart';
 import 'package:owomark/event_checkout.dart';
 import 'package:owomark/models/payment_item.dart';
 import 'package:owomark/wallet_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_interface.dart';
 
@@ -140,8 +141,14 @@ class _EventPaymentState extends State<EventPayment> {
   getPayment(context) async {
     setState(() {});
 
+    String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
     Future<dynamic> response =
-        apiInterface.getPayment('1', '0.5', widget.amount.toString());
+        apiInterface.getPayment(users, '0.5', widget.amount.toString());
 
     response.then((action) async {
       print(action.toString());

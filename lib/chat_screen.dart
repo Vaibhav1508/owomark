@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/home_screen.dart';
+import 'package:owomark/models/message_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_interface.dart';
 import 'models/message_item.dart';
@@ -18,6 +21,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
+  TextEditingController msg = new TextEditingController();
+
   ApiInterface apiInterface = new ApiInterface();
 
   List<MessageItem> chat = new List();
@@ -83,6 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: <Widget>[
           Expanded(
             child: TextField(
+              controller: msg,
               textCapitalization: TextCapitalization.sentences,
               onChanged: (value) {},
               decoration: InputDecoration.collapsed(
@@ -94,7 +101,13 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: Icon(Icons.send),
             iconSize: 25.0,
             color: Colors.black,
-            onPressed: () {},
+            onPressed: () {
+              if(msg.text==""){
+                Fluttertoast.showToast(msg: 'Please enter message');
+              }else{
+                sendMessage(context);
+              }
+            },
           )
         ],
       ),
@@ -180,7 +193,14 @@ class _ChatScreenState extends State<ChatScreen> {
   getEvents(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getMessages('1', widget.user);
+     String user = '',city='';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+      city = prefs.getString('city');
+  
+
+    Future<dynamic> response = apiInterface.getMessages(user, widget.user);
 
     response.then((action) async {
       print(action.toString());
@@ -193,6 +213,37 @@ class _ChatScreenState extends State<ChatScreen> {
             chat.add(notificationItem);
           }
           setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  sendMessage(context) async {
+    setState(() {});
+
+     String user = '',city='';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+      city = prefs.getString('city');
+  
+
+    Future<dynamic> response = apiInterface.sendMessage(user,widget.user,msg.text);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          Fluttertoast.showToast(msg:'message sent...');
+          msg.text = "";
+          chat.clear();
+          getEvents(context);
+          
         } else {
           print('error');
         }

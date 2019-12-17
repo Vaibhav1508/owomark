@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/models/users_item.dart';
 import 'package:owomark/payment_method.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
@@ -253,7 +254,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   getProfille(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getProfile('1');
+     String users = '',city='';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+      //city = prefs.getString('city');
+  
+
+    Future<dynamic> response = apiInterface.getProfile(users);
 
     response.then((action) async {
       print(action.toString());
@@ -287,15 +295,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   makeOrder(context) async {
     setState(() {});
 
+     String pincode = '',users='';
+
+    final prefs = await SharedPreferences.getInstance();
+     pincode = prefs.getString('pincode');
+      users = prefs.getString('user');
+  
+
     Future<dynamic> response = apiInterface.makeOrder(
-        '1',
+          users,
         total.toString(),
         widget.method.toString(),
         _email.text,
         _name.text,
         _address.text,
         _mobile.text,
-        '380021',
+        pincode,
         widget.method_charge.toString());
 
     response.then((action) async {

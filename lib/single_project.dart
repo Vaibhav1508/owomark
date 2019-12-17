@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:owomark/chat_screen.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
@@ -108,29 +109,23 @@ class _SingleProjectState extends State<SingleProject> {
                       title: Text('Additional Details 2'),
                     ),
                     Divider(),
-                    ListTile(
-                      title: Text(item.fname + " " + item.lname),
-                      trailing: Column(
-                        children: <Widget>[
-                          Text(
-                            'Message',
-                            style: TextStyle(fontSize: 16, color: Colors.green),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Icon(Icons.email)
-                        ],
-                      ),
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.green,
-                        child: Icon(
-                          Icons.person_outline,
-                          color: Colors.white,
+                    RaisedButton(
+                        color: Colors.green,
+                        padding: EdgeInsets.all(
+                          10.0,
                         ),
-                        radius: 25,
-                      ),
-                    )
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(5.0),
+                            side: BorderSide(color: Colors.green)),
+                        highlightColor: Colors.black,
+                        child: new Text(
+                          'Contact Seller',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>ChatScreen(user: item.user,)));
+                        })
+                  
                   ],
                 ),
               );

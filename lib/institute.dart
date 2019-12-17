@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:owomark/widgets/myinstitute.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
@@ -99,6 +100,8 @@ class _InstituteState extends State<Institute> {
             exp.text = null;
             education.text = null;
             title.text = null;
+            institute.clear();
+            getCategory(context);
           }
         });
   }
@@ -475,6 +478,13 @@ class _InstituteState extends State<Institute> {
       //setStatus(errormsg);
     } else {}
 
+    String user = '',city='';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+      city = prefs.getString('city');
+  
+
     String filename = tmpfile.path.split('/').last;
 
     Future<dynamic> response = apiInterface.addInstitute(
@@ -488,8 +498,8 @@ class _InstituteState extends State<Institute> {
         education,
         base64Image,
         filename,
-        'ahmedabad',
-        '1',
+        city,
+        user,
         widget.event_id);
 
     response.then((action) async {
@@ -503,6 +513,9 @@ class _InstituteState extends State<Institute> {
             subtitle: 'Submitted for Verification',
             style: SweetAlertStyle.success,
           );
+
+          institute.clear();
+          getCategory(context);
 
           setState(() {});
         } else {
@@ -549,20 +562,7 @@ Widget makeBestCategory(
                         fontWeight: FontWeight.bold,
                         fontSize: 18),
                   ),
-                  trailing: Column(
-                    children: <Widget>[
-                      Text(rate,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18)),
-                      Icon(
-                        Icons.star,
-                        size: 20,
-                        color: Colors.orange,
-                      ),
-                    ],
-                  ),
+                  
                 )),
           ),
         ),

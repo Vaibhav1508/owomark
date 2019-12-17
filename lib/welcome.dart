@@ -1,7 +1,10 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/Animation/fade_animation.dart';
 import 'package:owomark/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:owomark/login_screen.dart';
+import 'package:owomark/registrationscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomePage extends StatefulWidget {
   static String get routeName => '@routes/welcome-page';
@@ -20,8 +23,26 @@ class _WelcomePageState extends State<WelcomePage>
   @override
   void initState() {
     super.initState();
+    navigate();
     _scaleController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 800));
+  }
+
+  navigate() async{
+     String user;
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+
+     if(user==''){
+
+      // Fluttertoast.showToast(msg: 'No data found');
+
+     }else{
+
+       Navigator.push(context, MaterialPageRoute(builder: (_)=>DashboardScreen()));
+     }
+
   }
 
   @override
@@ -74,7 +95,7 @@ class _WelcomePageState extends State<WelcomePage>
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => DashboardScreen())),
+                                builder: (_) => RegistrationScreen())),
                         child: Container(
                           height: 50,
                           decoration: BoxDecoration(
@@ -82,7 +103,7 @@ class _WelcomePageState extends State<WelcomePage>
                               borderRadius: BorderRadius.circular(50)),
                           child: Center(
                             child: Text(
-                              "Get Started",
+                              "Register",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold),

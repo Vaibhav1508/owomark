@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:owomark/models/cart_model.dart';
-import 'package:owomark/models/notification_model.dart';
+import 'package:owomark/api_interface.dart';
+import 'package:owomark/models/NotificationItem.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationItem extends StatefulWidget {
   @override
@@ -8,10 +11,15 @@ class NotificationItem extends StatefulWidget {
 }
 
 class _NotificationItemState extends State<NotificationItem> {
+
+  ApiInterface apiInterface = new ApiInterface();
+
+  List<NotificationItems> notification = new List<NotificationItems>();
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
+      child: notification.length==0 ? Center(child: Text('No Notifications Yet...'),)  : Container(
           padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
           margin: EdgeInsets.only(top: 0.0, bottom: 0.0, right: 0.0),
           decoration: BoxDecoration(
@@ -24,9 +32,9 @@ class _NotificationItemState extends State<NotificationItem> {
                 topLeft: Radius.circular(30.0),
                 topRight: Radius.circular(30.0)),
             child: ListView.builder(
-              itemCount: notifications.length,
+              itemCount: notification.length,
               itemBuilder: (BuildContext context, int index) {
-                final Notifications item = notifications[index];
+                final item = notification[index];
 
                 return GestureDetector(
 
@@ -59,16 +67,29 @@ class _NotificationItemState extends State<NotificationItem> {
                                   item.title,
                                   style: TextStyle(
                                       color: Colors.black,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 16.0,),
                                 ),
                                 SizedBox(
-                                  height: 15.0,
+                                  height: 10.0,
                                 ),
                                 Container(
 
                                   child:
                                     Text(
-                                      item.description,
+                                      item.msg,
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                      ),
+                                    ),
+
+                                ),
+                                SizedBox(height: 10,),
+                                Container(
+
+                                  child:
+                                    Text(
+                                      item.time,
                                       style: TextStyle(
                                         color: Colors.grey,
                                         fontSize: 14.0,
@@ -76,6 +97,7 @@ class _NotificationItemState extends State<NotificationItem> {
                                     ),
 
                                 ),
+
                               ],
                             )
                           ],
@@ -90,4 +112,42 @@ class _NotificationItemState extends State<NotificationItem> {
           )),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+    getNewsFeed(context);
+  }
+
+  getNewsFeed(context) async {
+    setState(() {});
+
+    String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.getNews(users);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            NotificationItems notificationItem = NotificationItems.fromMap(list[i]);
+            notification.add(notificationItem);
+          }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
 }

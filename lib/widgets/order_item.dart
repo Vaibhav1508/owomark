@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:owomark/models/order_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api_interface.dart';
 import '../chat_screen.dart';
@@ -19,7 +20,7 @@ class _OrderItemState extends State<OrderItem> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
+      child: orders.length==0 ? Center(child: Text('No Orderes Yet...'),) :Container(
           padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
           margin: EdgeInsets.only(top: 0.0, bottom: 0.0, right: 0.0),
           decoration: BoxDecoration(
@@ -165,7 +166,13 @@ class _OrderItemState extends State<OrderItem> {
   getOrders(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getOrder('1');
+    String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.getOrder(users);
 
     response.then((action) async {
       print(action.toString());

@@ -6,12 +6,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:owomark/models/book_item.dart';
 import 'package:owomark/single_book.dart';
 import 'package:owomark/widgets/mybooks.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
 
 class OwosellScreen extends StatefulWidget {
+
+  final String dept_id;
+
+  OwosellScreen({Key key, this.dept_id}) : super(key: key);
+
   @override
   _OwosellScreenState createState() => _OwosellScreenState();
 }
@@ -84,6 +90,8 @@ class _OwosellScreenState extends State<OwosellScreen> {
             about.text = "";
             discount.text = "";
             profileImage = null;
+            books.clear();
+            getBooks(context);
           } else {
             SweetAlert.show(
               context,
@@ -477,7 +485,15 @@ class _OwosellScreenState extends State<OwosellScreen> {
   getBooks(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getOwoselleBook('ahmedabad', '216');
+    String city = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     city = prefs.getString('city');
+
+
+  
+
+    Future<dynamic> response = apiInterface.getOwoselleBook(city, widget.dept_id);
 
     response.then((action) async {
       print(action.toString());
@@ -523,6 +539,13 @@ class _OwosellScreenState extends State<OwosellScreen> {
       setStatus(errormsg);
     } else {}
 
+    String users = '',city='';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+      city = prefs.getString('city');
+  
+
     String filename = tmpfile.path.split('/').last;
 
     Future<dynamic> response = apiInterface.addSellBook(
@@ -536,9 +559,9 @@ class _OwosellScreenState extends State<OwosellScreen> {
         info,
         filename,
         base64Image,
-        '1',
-        'ahmedabad',
-        '216');
+        users,
+        city,
+        widget.dept_id);
 
     response.then((action) async {
       print(action.toString());

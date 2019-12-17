@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:owomark/dashboard_screen.dart';
 import 'package:owomark/models/news_item.dart';
+import 'package:owomark/my_news.dart';
 import 'package:owomark/upload_news.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_interface.dart';
 
@@ -66,8 +68,8 @@ class _NewsFeedState extends State<NewsFeed> {
               onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => UploadNews(
-                            comp_id: widget.comp_id,
+                      builder: (_) => MyNews(
+                            
                           ))),
             )
           ],
@@ -251,7 +253,13 @@ class _NewsFeedState extends State<NewsFeed> {
   getNewsFeed(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getNewsFeed('1', widget.comp_id);
+    String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.getNewsFeed(users, widget.comp_id);
 
     response.then((action) async {
       print(action.toString());
@@ -276,7 +284,13 @@ class _NewsFeedState extends State<NewsFeed> {
   likePost(context, String id) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.likePost('1', id);
+    String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.likePost(users, id);
 
     response.then((action) async {
       print(action.toString());

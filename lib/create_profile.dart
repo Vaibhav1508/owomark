@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
@@ -15,10 +16,13 @@ class CreateProfile extends StatefulWidget {
 class _CreateProfileState extends State<CreateProfile> {
   ApiInterface apiInterface = new ApiInterface();
 
+  String userid;
+  
   //Event List
   List<UsersItem> user = new List();
 
   var fname = TextEditingController();
+  var id = TextEditingController();
   var mobile = TextEditingController();
   var pincode = TextEditingController();
   var city = TextEditingController();
@@ -63,6 +67,22 @@ class _CreateProfileState extends State<CreateProfile> {
       decoration: new InputDecoration(
         hintText: "Enter E-Mail",
         labelText: "Email",
+        labelStyle: new TextStyle(color: const Color(0xFF424242)),
+        border: new OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      onChanged: (text) => setState(() {}),
+    );
+  }
+
+  Widget _customertextField() {
+    return new TextField(
+      controller: this.id,
+      enabled: false,
+      decoration: new InputDecoration(
+        hintText: "Customer Id",
+        labelText: "Customer Id",
         labelStyle: new TextStyle(color: const Color(0xFF424242)),
         border: new OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
@@ -117,7 +137,9 @@ class _CreateProfileState extends State<CreateProfile> {
           'Save Changes',
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
-        onPressed: () {});
+        onPressed: () {
+          updateProfile(context);
+        });
   }
 
   Widget _citytextField() {
@@ -172,6 +194,10 @@ class _CreateProfileState extends State<CreateProfile> {
           SizedBox(
             height: 20,
           ),
+          _customertextField(),
+            SizedBox(
+            height: 20,
+          ),
           _firstnametextField(),
           SizedBox(
             height: 20,
@@ -209,9 +235,19 @@ class _CreateProfileState extends State<CreateProfile> {
   }
 
   getProfille(context) async {
-    setState(() {});
+    
 
-    Future<dynamic> response = apiInterface.getProfile('1');
+    final prefs = await SharedPreferences.getInstance();
+     
+    
+
+     setState(() async{
+
+        userid = prefs.getString('user');
+     });
+  
+
+    Future<dynamic> response = apiInterface.getProfile(userid);
 
     response.then((action) async {
       print(action.toString());
@@ -225,16 +261,47 @@ class _CreateProfileState extends State<CreateProfile> {
           }
           setState(() {
             for (int i = 0; i < user.length; i++) {
-              Fluttertoast.showToast(
-                  msg: user[i].city, toastLength: Toast.LENGTH_SHORT);
-              city.text = user[i].city;
+             city.text = user[i].city;
               email.text = user[i].email;
               fname.text = user[i].fname;
+              id.text = 'Customer '+user[i].id;
               lname.text = user[i].lname;
               mobile.text = user[i].mobile;
               pincode.text = user[i].pincode;
             }
           });
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  updateProfile(context) async {
+    setState(() {});
+
+
+    Future<dynamic> response = apiInterface.updateProfile(userid,fname.text,lname.text,city.text,
+    pincode.text);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          Fluttertoast.showToast(msg: 'Chnages Saved');
+          getProfille(context);
+
+          //SharedPreferences.setMockInitialValues({});
+            
+            final prefs = await SharedPreferences.getInstance();
+
+            prefs.setString("name",fname.text+' '+lname.text);
+            prefs.setString("city",city.text);
+            prefs.setString("pincode",pincode.text);
+
         } else {
           print('error');
         }

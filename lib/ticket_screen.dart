@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
@@ -45,7 +46,7 @@ class _TicketScreenState extends State<TicketScreen> {
         children: <Widget>[
           //CategorySelector(),
           Expanded(
-            child: Container(
+            child: orders.length==0 ? Center(child: Text('No Tickets Yet...'),) : Container(
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -206,7 +207,13 @@ class _TicketScreenState extends State<TicketScreen> {
   getTickets(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getTickets('1');
+     String user = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+
+
+    Future<dynamic> response = apiInterface.getTickets(user);
 
     response.then((action) async {
       print(action.toString());

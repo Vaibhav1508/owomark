@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/widgets/transaction.dart';
+import 'package:owomark/widgets/widthraw.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
 import 'dashboard_screen.dart';
+import 'models/users_item.dart';
 
 class WalletScreen extends StatefulWidget {
   @override
@@ -15,11 +18,18 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
+
+   String balance="0";
+
+   List<UsersItem> user = new List<UsersItem>();
+                
   ApiInterface apiInterface = new ApiInterface();
   Razorpay _razorpay;
   int _currentTabIndex = 0;
   var couponcode = TextEditingController();
   var amount = TextEditingController();
+  var wamount = TextEditingController();
+  var phone = TextEditingController();
 
   Widget _savebutton() {
     return RaisedButton(
@@ -35,7 +45,39 @@ class _WalletScreenState extends State<WalletScreen> {
           'Add Money',
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
-        onPressed: () {});
+        onPressed: () {
+          openCheckout();
+        });
+  }
+
+   Widget widthraw() {
+    return RaisedButton(
+        color: Colors.green,
+        padding: EdgeInsets.all(
+          15.0,
+        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(30.0),
+            side: BorderSide(color: Colors.green)),
+        highlightColor: Colors.black,
+        child: new Text(
+          'Widthraw',
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+        onPressed: () {
+          if(wamount.text!=""||phone.text!=""){
+            if(int.parse(wamount.text)<200){
+          Fluttertoast.showToast(msg: "minimum amount to widthraw is 200 Rs",toastLength: Toast.LENGTH_SHORT);
+
+            }else{
+              widthrawMoney(context, phone.text, wamount.text);
+              phone.text = "";
+              wamount.text = "";
+            }
+          }else{
+          Fluttertoast.showToast(msg: "Please provide details",toastLength: Toast.LENGTH_SHORT);
+          }
+        });
   }
 
   Widget _rechargeButton() {
@@ -78,6 +120,37 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 
+
+    Widget _amountTextField() {
+    return new TextField(
+      controller: this.wamount,
+      decoration: new InputDecoration(
+        hintText: "Amount to be widthrawn",
+        labelText: "Amount",
+        labelStyle: new TextStyle(color: const Color(0xFF424242)),
+        border: new OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      onChanged: (text) => setState(() {}),
+    );
+  }
+
+   Widget _numberTextField() {
+    return new TextField(
+      controller: this.phone,
+      decoration: new InputDecoration(
+        hintText: "Your PhonePe / Paytm Number",
+        labelText: "PhonePe / Paytm Number",
+        labelStyle: new TextStyle(color: const Color(0xFF424242)),
+        border: new OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      onChanged: (text) => setState(() {}),
+    );
+  }
+
   Widget _coupontextField() {
     return new TextField(
       controller: this.couponcode,
@@ -93,12 +166,16 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 
-  /*
+
+  
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    setBalance();
+    getProfille(context);
+
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -112,15 +189,24 @@ class _WalletScreenState extends State<WalletScreen> {
     _razorpay.clear();
   }
   void openCheckout() async{
-    var options = {"key":"","amount":amount,"name":"Owomark","description":"Test Payment","prefill":{"contact":"","email":""},
-      "external":["paytm"]
+    int amt = int.parse(amount.text)*100;
+    var options = {"key":"rzp_test_fgKuaSO7wxrqCK","amount":amt,"name":"Owomark","description":"Test Payment","prefill":{"contact":"","email":""},
+      "external":{
+        'wallet':['paytm']
+      }
   };
     try{
       _razorpay.open(options);
     }catch(e){
       debugPrint(e);
     }
-*/
+  }
+
+
+  setBalance()async{
+final prefs = await SharedPreferences.getInstance();
+     balance = prefs.getString('balance');
+  }
   @override
   Widget build(BuildContext context) {
     final _kTabPages = <Widget>[
@@ -188,7 +274,7 @@ class _WalletScreenState extends State<WalletScreen> {
             height: 10,
           ),
           Text(
-            'Rs. 200 ',
+            'Rs. '+ balance,
             style: TextStyle(
                 fontSize: 18,
                 // color: ,
@@ -201,13 +287,42 @@ class _WalletScreenState extends State<WalletScreen> {
           SizedBox(
             height: 20,
           ),
-          _savebutton()
+          _savebutton(),
+           SizedBox(
+            height: 20,
+          ),
+          ListTile(
+            title: Text('Widthraw Money',style: TextStyle(fontSize: 20,),),
+            trailing: Icon(Icons.arrow_forward_ios),
+          ),
+            SizedBox(
+            height: 20,
+          ),
+
+          _amountTextField(),
+            SizedBox(
+            height: 20,
+          ),
+          _numberTextField(),
+            SizedBox(
+            height: 20,
+          ),
+          widthraw()
+          
         ],
+        
       ),
       Column(
         children: <Widget>[
           Transaction(),
         ],
+
+      ),
+      Column(
+        children: <Widget>[
+          WidthrawScreen(),
+        ],
+        
       )
     ];
 
@@ -225,6 +340,14 @@ class _WalletScreenState extends State<WalletScreen> {
         title: Text(
           'Transaction',
         ),
+        
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.attach_money),
+        title: Text(
+          'Widthrawal',
+        ),
+        
       )
     ];
 
@@ -265,13 +388,22 @@ class _WalletScreenState extends State<WalletScreen> {
       body: _kTabPages[_currentTabIndex],
       bottomNavigationBar: bottomNavbar,
     );
+    
   }
+
+  
 
   couponRecharge(context) async {
     setState(() {});
 
+    String user = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+  
+
     Future<dynamic> response =
-        apiInterface.couponRecharge('1', couponcode.text);
+        apiInterface.couponRecharge(user,couponcode.text);
 
     response.then((action) async {
       print(action.toString());
@@ -284,7 +416,7 @@ class _WalletScreenState extends State<WalletScreen> {
             subtitle: 'Your recharge has been successfull',
             style: SweetAlertStyle.success,
           );
-          couponcode.text = "";
+          amount.text = "";
         } else {
           SweetAlert.show(
             context,
@@ -298,15 +430,145 @@ class _WalletScreenState extends State<WalletScreen> {
       print(value);
     });
   }
+
+   getProfille(context) async {
+    setState(() {});
+
+     String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.getProfile(users);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            UsersItem notificationItem = UsersItem.fromMap(list[i]);
+            user.add(notificationItem);
+          }
+          setState(() {
+            for (int i = 0; i < user.length; i++) {
+              balance = user[i].balance;
+            }
+          });
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+
+   addMoney(context,String amounts) async {
+    setState(() {});
+
+    String user = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+  
+
+    Future<dynamic> response =
+        apiInterface.addMoney(user,amounts);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          SweetAlert.show(
+            context,
+            title: 'Money Added !',
+            subtitle: 'Money has been added to your wallet',
+            style: SweetAlertStyle.success,
+          );
+          amount.text = "";
+          getProfille(context);
+        } else {
+          SweetAlert.show(
+            context,
+            title: 'Oops !',
+            subtitle: 'Try again later',
+            style: SweetAlertStyle.error,
+          );
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  widthrawMoney(context,String phone,String amount) async {
+    setState(() {});
+
+     String user = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+
+
+    Future<dynamic> response =
+        apiInterface.addWidthrawal(user,phone,amount);
+
+    response.then((action) async {
+      print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          SweetAlert.show(
+            context,
+            title: 'Requested !',
+            subtitle: 'Widthrawal requested successfully...',
+            style: SweetAlertStyle.success,
+          );
+         getProfille(context);
+        } else {
+          SweetAlert.show(
+            context,
+            title: 'Oops !',
+            subtitle: 'Insufficiant balance',
+            style: SweetAlertStyle.error,
+          );
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+
+  addMoney(context,amount.text);
+  
+  
+  Fluttertoast.showToast(msg: "Payment successfull");
+  
 }
 
-void _handlePaymentSuccess(PaymentSuccessResponse response) {
-  Fluttertoast.showToast(msg: "success" + response.paymentId);
 }
+
+
+
+
 
 void _handlePaymentError(PaymentFailureResponse response) {
   Fluttertoast.showToast(
       msg: "error" + response.code.toString() + response.message);
+      BuildContext context;
+            SweetAlert.show(
+                  context,
+            title: 'Oops !',
+            subtitle: 'Payment Failed',
+            style: SweetAlertStyle.error,
+          );
 }
 
 void _handleExternalWallet(ExternalWalletResponse response) {

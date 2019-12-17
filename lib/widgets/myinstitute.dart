@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:owomark/models/institute_item.dart';
+import 'package:rating_bar/rating_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import '../api_interface.dart';
@@ -91,7 +93,7 @@ class _MyInstituteState extends State<MyInstitute> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         SizedBox(
-                                          height: 15.0,
+                                          height: 7.0,
                                         ),
                                         Container(
                                             width: MediaQuery.of(context)
@@ -108,15 +110,20 @@ class _MyInstituteState extends State<MyInstitute> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
-                                                Text(
-                                                  "Active",
-                                                  style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 18.0,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
+                                                SizedBox(height: 5,),
+                                                
+                                                RatingBar.readOnly(
+                      //onRatingChanged: (rating) => setState(()=>rating = rating),
+                      filledIcon: Icons.star,
+                      initialRating: double.parse(item.rate),
+                      emptyIcon: Icons.star_border,
+                      halfFilledIcon: Icons.star_half,
+                      isHalfAllowed: false,
+                      filledColor: Colors.orange,
+                      emptyColor: Colors.orangeAccent,
+                      halfFilledColor: Colors.orangeAccent,
+                      size: 20,
+                    ) 
                                               ],
                                             )),
                                       ],
@@ -125,13 +132,7 @@ class _MyInstituteState extends State<MyInstitute> {
                             ),
                             Row(
                               children: <Widget>[
-                                Text(item.rate),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.star,
-                                    color: Colors.orange,
-                                  ),
-                                ),
+                               
                                 IconButton(
                                   icon: Icon(
                                     Icons.restore_from_trash,
@@ -176,7 +177,12 @@ class _MyInstituteState extends State<MyInstitute> {
   getInstitutes(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getInstituteByUser('1');
+     String user = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     user = prefs.getString('user');
+
+    Future<dynamic> response = apiInterface.getInstituteByUser(user);
 
     response.then((action) async {
       print(action.toString());

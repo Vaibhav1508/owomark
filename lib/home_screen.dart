@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:owomark/api_interface.dart';
 import 'package:owomark/dashboard_screen.dart';
 import 'package:owomark/models/message_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'chat_screen.dart';
 
@@ -40,13 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //textAlign: TextAlign.center,
         ),
         elevation: 3.0,
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.search),
-              iconSize: 30.0,
-              color: Colors.grey,
-              onPressed: () {}),
-        ],
+       
       ),
       body: Column(
         children: <Widget>[
@@ -234,7 +229,13 @@ class _HomeScreenState extends State<HomeScreen> {
   getEvents(context) async {
     setState(() {});
 
-    Future<dynamic> response = apiInterface.getRecentChats('1');
+    String users = '';
+
+    final prefs = await SharedPreferences.getInstance();
+     users = prefs.getString('user');
+  
+
+    Future<dynamic> response = apiInterface.getRecentChats(users);
 
     response.then((action) async {
       print(action.toString());

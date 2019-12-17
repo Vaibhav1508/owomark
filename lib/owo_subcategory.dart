@@ -82,7 +82,7 @@ class _OwoSubCategoryState extends State<OwoSubCategory> {
                                 onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => OwosellScreen(),
+                                    builder: (_) => OwosellScreen(dept_id: item.id,),
                                   ),
                                 ),
                                 child: Container(

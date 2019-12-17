@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:owomark/add_project.dart';
+import 'package:owomark/project_screen.dart';
 import 'package:owomark/single_project.dart';
 
 import 'api_interface.dart';
@@ -46,13 +48,16 @@ class _ProjectsState extends State<Projects> {
               icon: Icon(Icons.turned_in_not),
               iconSize: 30,
               color: Colors.grey,
-              onPressed: () {}),
+              onPressed: ()=>Navigator.push(context, MaterialPageRoute(
+                builder: (_)=>ProjectScreens()
+              ))),
           IconButton(
             icon: Icon(Icons.note_add),
             iconSize: 30,
             color: Colors.grey,
-            onPressed: () {},
-          )
+           onPressed: ()=>Navigator.push(context, MaterialPageRoute(
+                builder: (_)=>AddProject()
+              ))),
         ],
         elevation: 3.0,
       ),

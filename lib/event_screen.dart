@@ -40,6 +40,7 @@ class _EventScreenState extends State<EventScreen> {
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.add_circle),
+              tooltip: 'Register Your Event',
               iconSize: 30.0,
               color: Colors.grey,
               onPressed: () {

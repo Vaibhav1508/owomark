@@ -5,6 +5,7 @@ class InstituteItem {
   String name = "";
   String imageUrl = "";
   String rate = "";
+  String rated = "";
   String location = "";
   String address = "";
   String education = "";
@@ -19,6 +20,7 @@ class InstituteItem {
     return {
       'id': this.id,
       'name': this.name,
+      'rated': this.rated,
       'img': this.imageUrl,
       'rate': this.rate,
       'location': this.location,
@@ -41,6 +43,7 @@ class InstituteItem {
       user: map['user'] as String,
       rate: map['rate'] as String,
       address: map['address'] as String,
+      rated: map['rated'] as String,
       contact: map['contact'] as String,
       email: map['email'] as String,
       tutor: map['tutor'] as String,
@@ -55,6 +58,7 @@ class InstituteItem {
     @required this.id,
     @required this.name,
     @required this.imageUrl,
+    @required this.rated,
     @required this.rate,
     @required this.location,
     @required this.user,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:owomark/cart_screen.dart';
 import 'package:owomark/competitions.dart';
 import 'package:owomark/create_profile.dart';
@@ -12,6 +13,7 @@ import 'package:owomark/models/category_item.dart';
 import 'package:owomark/models/slider_item.dart';
 import 'package:owomark/news_feed.dart';
 import 'package:owomark/notification_screen.dart';
+import 'package:owomark/pgs.dart';
 import 'package:owomark/products_screen.dart';
 import 'package:owomark/projects.dart';
 import 'package:owomark/quiz.dart';
@@ -23,11 +25,14 @@ import 'package:owomark/single_project.dart';
 import 'package:owomark/ticket_screen.dart';
 import 'package:owomark/type_category.dart';
 import 'package:owomark/wallet_screen.dart';
+import 'package:owomark/welcome.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'api_interface.dart';
 import 'category_screen.dart';
+import 'login_screen.dart';
 import 'models/PgItem.dart';
 import 'models/book_item.dart';
 import 'models/competition_item.drt.dart';
@@ -47,6 +52,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   ApiInterface apiInterface = new ApiInterface();
 
+  DateTime currentBackPressTime;
+
+  String name='',email='';
+
   //Category List
   List<CategoryItem> notifications = new List();
 
@@ -56,6 +65,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //Slider images
 
   List<SliderItem> images = new List();
+
+
+  //Slider 2 images
+
+  List<SliderItem> banners = new List();
 
   //Best deal List
   List<BookItem> deals = new List();
@@ -85,32 +99,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String pgurl = 'http://owomark.com/owomarkapp/images/pg/';
   String insturl = 'http://owomark.com/owomarkapp/images/classes/';
   String sliderurl = 'http://owomark.com/owomarkapp/images/offer/';
+  String bannerurl = 'http://owomark.com/owomarkapp/images/friday/';
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context)  {
+    return 
+        WillPopScope(onWillPop: ()async{return false;},child:  Scaffold(
         drawer: new Drawer(
           child: ListView(
             children: <Widget>[
               UserAccountsDrawerHeader(
                 accountName: Text(
-                  'Welcome, Vaibhav Mehta',
+                  'Welcome, '+name,
                   style: TextStyle(
                     fontSize: 18,
                   ),
                 ),
                 accountEmail: Text(
-                  'vaibhav.18@gmail.com',
+                  email,
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.white,
-                  child: Text(
-                    'V',
-                    style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold),
+                  child: Icon(
+                    Icons.person,color: Colors.green,size: 35,
                   ),
                 ),
               ),
@@ -151,6 +163,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onTap: () => Navigator.push(
                     context, MaterialPageRoute(builder: (_) => OwoCategory())),
               ),
+              /*ListTile(
+                title: Text(
+                  'Question & Answer',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                trailing: Icon(Icons.person),
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => CreateProfile())),
+              ),*/
               ListTile(
                 title: Text(
                   'Profile',
@@ -160,6 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onTap: () => Navigator.push(context,
                     MaterialPageRoute(builder: (_) => CreateProfile())),
               ),
+
               ListTile(
                 title: Text(
                   'Messages',
@@ -169,6 +191,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     context, MaterialPageRoute(builder: (_) => HomeScreen())),
                 trailing: Icon(Icons.email),
               ),
+              Divider(),
+
               ListTile(
                 title: Text(
                   'Shopping cart',
@@ -178,7 +202,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onTap: () => Navigator.push(
                     context, MaterialPageRoute(builder: (_) => CartScreen())),
               ),
-              Divider(),
               ListTile(
                 title: Text(
                   'Your Orders',
@@ -213,7 +236,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Icon(Icons.arrow_forward),
+                onTap: () async{
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                     prefs.setString("user",'');
+            prefs.setString("email",'');
+            prefs.setString("name",'');
+            prefs.setString("city",'');
+            prefs.setString("balance",'');
+            prefs.setString("pincode",'');
+
+
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>LoginScreen()));
+                },
               ),
+              
             ],
           ),
         ),
@@ -236,25 +272,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           elevation: 4.0,
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              iconSize: 30.0,
-              color: Colors.grey,
-              onPressed: () {
-                SweetAlert.show(context,
-                    title: 'Thank You !',
-                    subtitle: 'your order has been placed',
-                    style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => OrderScreen(),
-                      ));
-
-                  return false;
-                });
-              },
-            ),
+           
             IconButton(
                 icon: Icon(Icons.shopping_cart),
                 iconSize: 30.0,
@@ -269,6 +287,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(10.0),
+         // WillPopScope(child: getBody(),onWillPop: onWillPop(),),
           child: Column(
             children: <Widget>[
               images.length == 0 ? Text('') : buildSlider(),
@@ -377,6 +396,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
               SizedBox(
                 height: 20,
               ),
+               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Stationery",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    child: Text("All"),
+                    onTap: () =>  Navigator.push(
+          context, MaterialPageRoute(builder: (_) => Category(panel_id: '1'))),
+  
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
               images.length == 0 ? Text('') : buildSlider2(),
               SizedBox(
                 height: 20,
@@ -439,6 +479,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
+                  GestureDetector(
+                    child: Text("All"),
+                    onTap: () => Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => TypeCategory())),
+                  )
                 ],
               ),
               SizedBox(
@@ -474,8 +519,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ),
+                    SizedBox(height: 20,),
+                    Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Buy and Sell your books",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  
+                ],
+              ),
+              SizedBox(height: 10.0,),
+                     buildSlider3(),
               SizedBox(
-                height: 40,
+                height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -646,7 +707,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   GestureDetector(
                     child: Text("All"),
                     onTap: () => Navigator.push(
-                        context, MaterialPageRoute(builder: (_) => Projects())),
+                        context, MaterialPageRoute(builder: (_) => Pgs())),
                   )
                 ],
               ),
@@ -683,13 +744,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       )),
             ],
           ),
-        ));
-  }
+        ))
+  ,);
+   }
 
   @override
   void initState() {
     super.initState();
     getSlider(context);
+    getSlider2(context);
     getNotifications(context);
     getDashboardBooks(context);
     getDashboardEvents(context);
@@ -715,7 +778,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
             CategoryItem notificationItem = CategoryItem.fromMap(list[i]);
             notifications.add(notificationItem);
           }
-          setState(() {});
+
+          final prefs = await SharedPreferences.getInstance();
+          String names = prefs.getString('name')?? '';
+          String emails = prefs.getString('email')?? '';
+          //Fluttertoast.showToast(msg: user);
+          
+          setState(() {
+            name = names;
+            email = emails;
+          });
         } else {
           print('error');
         }
@@ -779,6 +851,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  getSlider2(context) async {
+    setState(() {});
+
+    Future<dynamic> response = apiInterface.getSlider2('1');
+
+    response.then((action) async {
+      // print(action.toString());
+      if (action != null) {
+        Map data = jsonDecode(action.toString());
+        if (data["status"] == "200") {
+          List<dynamic> list = data['result'];
+          for (int i = 0; i < list.length; i++) {
+            SliderItem notificationItem = SliderItem.fromMap(list[i]);
+            banners.add(notificationItem);
+          }
+          setState(() {});
+        } else {
+          print('error');
+        }
+      }
+    }, onError: (value) {
+      print(value);
+    });
+  }
+
   //Projects Api
 
   getProjects(context) async {
@@ -831,6 +928,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }, onError: (value) {
       print(value);
     });
+  }
+
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+
+    if(currentBackPressTime == null || now.difference(currentBackPressTime)>Duration(seconds: 2)){
+      currentBackPressTime = now;
+      Fluttertoast.showToast(msg:'Exit From App');
+      return Future.value(false);
+    }
+    return Future.value(true);
   }
 
   //Books Api
@@ -1175,18 +1283,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget buildSlider2() {
     return GestureDetector(
       child: Container(
-        height: 150,
-        child: Swiper(
-          itemCount: images.length,
-          viewportFraction: 0.8,
-          scale: 0.9,
-          pagination: SwiperPagination(),
-          autoplay: true,
+        height: 140,
+      child: Swiper(
+        itemCount: banners.length,
+        viewportFraction: 1.0,
+        scale: 1.0,
+        pagination: SwiperPagination(),
+        autoplay: true,
           itemBuilder: (BuildContext context, int index) {
             return ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
               child: Image.network(
-                sliderurl + images[index].imageUrl,
+                sliderurl + banners[index].imageUrl,
                 fit: BoxFit.cover,
               ),
             );
@@ -1195,6 +1303,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       onTap: () => Navigator.push(
           context, MaterialPageRoute(builder: (_) => Category(panel_id: '1'))),
+    );
+  }
+
+  Widget buildSlider3() {
+    return GestureDetector(
+      child: Container(
+        height: 140,
+        width: MediaQuery.of(context).size.width,
+      child: ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: Image.asset(
+                'assets/images/glass.jpg',
+                fit: BoxFit.cover,
+              ),
+            )
+          
+        
+      ),
+      onTap: () => Navigator.push(
+          context, MaterialPageRoute(builder: (_) => Category())),
     );
   }
 }

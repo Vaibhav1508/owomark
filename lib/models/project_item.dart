@@ -8,6 +8,7 @@ class ProjectItem {
   String desc = "";
   String fname = "";
   String lname = "";
+  String user = "";
 
   Map<String, dynamic> toMap() {
     return {
@@ -17,6 +18,7 @@ class ProjectItem {
       'price': this.price,
       'f_name': this.fname,
       'l_name': this.lname,
+      'user_id': this.user,
       'description': this.desc,
     };
   }
@@ -29,6 +31,7 @@ class ProjectItem {
       price: map['price'] as String,
       fname: map['f_name'] as String,
       lname: map['l_name'] as String,
+      user: map['user_id'] as String,
       desc: map['description'] as String,
     );
   }
@@ -40,6 +43,7 @@ class ProjectItem {
     @required this.price,
     @required this.desc,
     @required this.fname,
+    @required this.user,
     @required this.lname,
   });
 }
